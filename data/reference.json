@@ -1,0 +1,56 @@
+{
+  "polyatomic_ions": [
+    {"formula": "NH4+", "name": "Ammonium", "charge": "+1"},
+    {"formula": "OH-", "name": "Hydroxide", "charge": "-1"},
+    {"formula": "NO3-", "name": "Nitrate", "charge": "-1"},
+    {"formula": "NO2-", "name": "Nitrite", "charge": "-1"},
+    {"formula": "SO4(2-)", "name": "Sulfate", "charge": "-2"},
+    {"formula": "SO3(2-)", "name": "Sulfite", "charge": "-2"},
+    {"formula": "CO3(2-)", "name": "Carbonate", "charge": "-2"},
+    {"formula": "HCO3-", "name": "Bicarbonate", "charge": "-1"},
+    {"formula": "PO4(3-)", "name": "Phosphate", "charge": "-3"},
+    {"formula": "C2H3O2-", "name": "Acetate", "charge": "-1"},
+    {"formula": "ClO3-", "name": "Chlorate", "charge": "-1"},
+    {"formula": "ClO4-", "name": "Perchlorate", "charge": "-1"},
+    {"formula": "CN-", "name": "Cyanide", "charge": "-1"},
+    {"formula": "MnO4-", "name": "Permanganate", "charge": "-1"}
+  ],
+  "solubility_rules": [
+    "Group 1 alkali metal cations (Li+, Na+, K+, etc.) and NH4+ salts are ALWAYS soluble.",
+    "Nitrate (NO3-), Acetate (C2H3O2-), and Perchlorate (ClO4-) salts are ALWAYS soluble.",
+    "Cl-, Br-, and I- salts are soluble, EXCEPT with Ag+, Pb2+, and Hg2(2+).",
+    "Sulfate (SO4 2-) salts are soluble, EXCEPT with Ba2+, Sr2+, Pb2+, and Ca2+.",
+    "Hydroxides (OH-) and Sulfides (S 2-) are INSOLUBLE, EXCEPT with Group 1, NH4+, Ba2+, Sr2+, and Ca2+.",
+    "Carbonates (CO3 2-) and Phosphates (PO4 3-) are INSOLUBLE, EXCEPT with Group 1 cations and NH4+."
+  ],
+  "strong_acids": [
+    {"formula": "HCl", "name": "Hydrochloric Acid"},
+    {"formula": "HBr", "name": "Hydrobromic Acid"},
+    {"formula": "HI", "name": "Hydroiodic Acid"},
+    {"formula": "HNO3", "name": "Nitric Acid"},
+    {"formula": "HClO4", "name": "Perchloric Acid"},
+    {"formula": "HClO3", "name": "Chloric Acid"},
+    {"formula": "H2SO4", "name": "Sulfuric Acid (1st ionization)"}
+  ],
+  "strong_bases": [
+    {"formula": "LiOH", "name": "Lithium Hydroxide"},
+    {"formula": "NaOH", "name": "Sodium Hydroxide"},
+    {"formula": "KOH", "name": "Potassium Hydroxide"},
+    {"formula": "RbOH", "name": "Rubidium Hydroxide"},
+    {"formula": "CsOH", "name": "Cesium Hydroxide"},
+    {"formula": "Ca(OH)2", "name": "Calcium Hydroxide"},
+    {"formula": "Sr(OH)2", "name": "Strontium Hydroxide"},
+    {"formula": "Ba(OH)2", "name": "Barium Hydroxide"}
+  ],
+  "si_prefixes": [
+    {"prefix": "Giga-", "symbol": "G", "factor": "10^9"},
+    {"prefix": "Mega-", "symbol": "M", "factor": "10^6"},
+    {"prefix": "Kilo-", "symbol": "k", "factor": "10^3"},
+    {"prefix": "Deci-", "symbol": "d", "factor": "10^-1"},
+    {"prefix": "Centi-", "symbol": "c", "factor": "10^-2"},
+    {"prefix": "Milli-", "symbol": "m", "factor": "10^-3"},
+    {"prefix": "Micro-", "symbol": "μ", "factor": "10^-6"},
+    {"prefix": "Nano-", "symbol": "n", "factor": "10^-9"},
+    {"prefix": "Pico-", "symbol": "p", "factor": "10^-12"}
+  ]
+}

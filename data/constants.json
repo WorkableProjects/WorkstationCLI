@@ -1,0 +1,13 @@
+{
+  "avogadro_number": 6.02214076e23,
+  "molar_volume_stp_L_per_mol": 22.414,
+  "standard_temp_K": 273.15,
+  "standard_pressure_atm": 1.0,
+  "standard_pressure_mmHg": 760.0,
+  "standard_pressure_kPa": 101.325,
+  "R_gas_constant": {
+    "L_atm_per_mol_K": 0.082057,
+    "J_per_mol_K": 8.314462,
+    "L_mmHg_per_mol_K": 62.3637
+  }
+}

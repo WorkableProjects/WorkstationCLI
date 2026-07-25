@@ -1,6 +1,7 @@
 """Reusable Ollama API client used by every AI command."""
 
 import json
+import socket
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
@@ -142,7 +143,7 @@ class OllamaClient:
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
                 return json.loads(response.read().decode("utf-8"))
-        except (urllib.error.URLError, TimeoutError) as exc:
+        except (urllib.error.URLError, TimeoutError, socket.timeout) as exc:
             raise OllamaClientError(f"Unable to reach Ollama at {self.base_url}: {exc}") from exc
         except json.JSONDecodeError as exc:
             raise OllamaClientError(f"Ollama returned malformed JSON: {exc}") from exc
@@ -151,7 +152,7 @@ class OllamaClient:
         try:
             with urllib.request.urlopen(self.base_url + path, timeout=self.timeout) as response:
                 return json.loads(response.read().decode("utf-8"))
-        except (urllib.error.URLError, TimeoutError) as exc:
+        except (urllib.error.URLError, TimeoutError, socket.timeout) as exc:
             raise OllamaClientError(f"Unable to reach Ollama at {self.base_url}: {exc}") from exc
         except json.JSONDecodeError as exc:
             raise OllamaClientError(f"Ollama returned malformed JSON: {exc}") from exc
@@ -161,7 +162,7 @@ class OllamaClient:
         try:
             with urllib.request.urlopen(url, timeout=self.timeout) as response:
                 return response.read().decode("utf-8", errors="replace")
-        except (urllib.error.URLError, TimeoutError) as exc:
+        except (urllib.error.URLError, TimeoutError, socket.timeout) as exc:
             raise OllamaClientError(f"Unable to reach {url}: {exc}") from exc
 
     def _server_root_url(self) -> str:

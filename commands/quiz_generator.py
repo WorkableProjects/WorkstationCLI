@@ -6,7 +6,7 @@ from services.ollama_prompts import quiz_generator_prompt
 
 
 def run_quiz_generator() -> None:
-    """Generate a study quiz for a requested topic."""
+    """Generate a study quiz for a requested topic. Only output questions at the top, and answers of each at the bottom. Check your answers BEFORE submitting, as the excess wording is added."""
     topic = input("Quiz topic: ").strip()
     if not topic:
         print("\n[Error] Topic cannot be empty.")

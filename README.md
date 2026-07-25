@@ -14,7 +14,7 @@ Made by **Workable Projects** (Created by **Dutchh**).
 6. **Limiting Reagent Calculator**: Identifies limiting & excess reagents and theoretical yield.
 7. **Percent Yield Calculator**: `(Actual / Theoretical) * 100`.
 8. **Chemistry Reference**: Offline database for Periodic Table, Polyatomic Ions, Solubility Rules, Strong Acids & Bases, SI Prefixes, and Constants.
-9. **AI Tools**: Local Ollama-backed AI Chat, Quiz Generator, Study Planner, Essay Helper, and Socratic Tutor.
+9. **AI Tools**: Local Ollama-backed AI Chat, Quiz Generator, and Study Planner.
 10. **CLI Information**: Version and author credits.
 
 ## Running the Application

@@ -1,6 +1,5 @@
 """Category menu for chemistry calculators and reference tools."""
 
-from core.about import display_about
 from core.menu import display_menu
 from calculators.concentration import run_concentration_calculator
 from calculators.dilution import run_dilution_calculator
@@ -23,7 +22,6 @@ def run_chemistry_menu() -> None:
         ("6", "Chemistry Reference"),
         ("7", "Dilution"),
         ("8", "Concentration"),
-        ("9", "CLI Information"),
         ("0", "Return to Main Menu"),
     ]
     handlers = {
@@ -35,7 +33,6 @@ def run_chemistry_menu() -> None:
         "6": run_chemistry_reference,
         "7": run_dilution_calculator,
         "8": run_concentration_calculator,
-        "9": display_about,
     }
 
     while True:

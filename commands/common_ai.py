@@ -1,8 +1,9 @@
 """Shared helpers and settings for AI command modules."""
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 
+from services.config import CONFIG_FILE, DEFAULT_MODEL, load_config, open_config_in_editor, save_config
 from services.ollama_client import OllamaClient
 from services.ollama_prompts import ReasoningLevel
 
@@ -11,13 +12,50 @@ from services.ollama_prompts import ReasoningLevel
 class AISettings:
     """Runtime AI settings shared by AI commands during a CLI session."""
 
-    model: str = "llama3.2"
+    model: str = DEFAULT_MODEL
     base_url: str = "http://localhost:11434/api"
     timeout: float = 60.0
     reasoning_level: ReasoningLevel = ReasoningLevel.MEDIUM
 
 
 settings = AISettings()
+
+
+def _coerce_reasoning_level(value: Any) -> ReasoningLevel:
+    """Return a valid reasoning level from config or fallback to Medium."""
+    for level in ReasoningLevel:
+        if value == level.value:
+            return level
+    return ReasoningLevel.MEDIUM
+
+
+def load_ai_settings() -> None:
+    """Load AI settings from the local configuration file."""
+    ai_config = load_config().get("ai", {})
+    settings.model = str(ai_config.get("model", DEFAULT_MODEL))
+    settings.base_url = str(ai_config.get("base_url", settings.base_url)).rstrip("/")
+    try:
+        settings.timeout = float(ai_config.get("timeout", settings.timeout))
+    except (TypeError, ValueError):
+        settings.timeout = 60.0
+    settings.reasoning_level = _coerce_reasoning_level(ai_config.get("reasoning_level"))
+
+
+def save_ai_settings() -> None:
+    """Persist current AI settings to the local configuration file."""
+    save_config(
+        {
+            "ai": {
+                "model": settings.model,
+                "base_url": settings.base_url,
+                "timeout": settings.timeout,
+                "reasoning_level": settings.reasoning_level.value,
+            }
+        }
+    )
+
+
+load_ai_settings()
 
 
 def choose_reasoning_level(default: Optional[ReasoningLevel] = None) -> ReasoningLevel:
@@ -50,6 +88,7 @@ def get_reasoning_level() -> ReasoningLevel:
 def configure_ai_settings() -> None:
     """Configure model, Ollama endpoint, timeout, and reasoning defaults."""
     print("\nAI Settings")
+    print(f"Config file     : {CONFIG_FILE}")
     print(f"Current model   : {settings.model}")
     print(f"Current endpoint: {settings.base_url}")
     print(f"Current timeout : {settings.timeout:g} seconds")
@@ -74,14 +113,26 @@ def configure_ai_settings() -> None:
             print("\n[Warning] Invalid timeout. Keeping previous value.")
 
     settings.reasoning_level = choose_reasoning_level(settings.reasoning_level)
-    print("\nAI settings saved for this session.")
+    save_ai_settings()
+    print(f"\nAI settings saved to {CONFIG_FILE}.")
+    input("\nPress ENTER to return to menu...")
+
+
+def edit_ai_config_file() -> None:
+    """Open the local configuration file in an editor, then reload settings."""
+    print(f"\nLocal config file: {CONFIG_FILE}")
+    if open_config_in_editor():
+        load_ai_settings()
+        print("\nAI settings reloaded from config file.")
+    else:
+        print("\nNo EDITOR/VISUAL environment variable is set, so the file was not opened automatically.")
+        print(f"Edit this file manually, then restart or reopen this menu: {CONFIG_FILE}")
     input("\nPress ENTER to return to menu...")
 
 
 def display_ai_settings() -> str:
     """Return a short settings summary for menu display."""
     return f"Model: {settings.model} | Reasoning: {settings.reasoning_level.value}"
-
 
 
 def test_ollama_connectivity() -> None:

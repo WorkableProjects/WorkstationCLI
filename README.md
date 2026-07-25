@@ -23,6 +23,10 @@ Made by **Workable Projects** (Created by **Dutchh**).
 python workstation.py
 ```
 
+## Local AI Configuration
+
+AI settings are stored in `~/.workstation_cli/config.json`. The default Ollama model is `llama3.2:3b-instruct-q4_K_M`, which includes the quantized model tag. You can edit this file from the AI menu or change the settings interactively.
+
 ## Running Tests
 
 ```bash

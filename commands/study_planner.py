@@ -6,7 +6,7 @@ from services.ollama_prompts import study_planner_prompt
 
 
 def run_study_planner() -> None:
-    """Generate a study plan for a goal or exam."""
+    """Generate a study plan for a goal or exam. Try to make the best plan you can, since this CLI is not a chat interface. Check your plan BEFORE submitting."""
     goal = input("Study goal: ").strip()
     if not goal:
         print("\n[Error] Goal cannot be empty.")

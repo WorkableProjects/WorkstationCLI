@@ -1,6 +1,6 @@
 """Quiz generator command using the shared Ollama client."""
 
-from commands.common_ai import build_client, choose_reasoning_level
+from commands.common_ai import build_client, get_reasoning_level
 from services.ollama_client import OllamaClientError
 from services.ollama_prompts import quiz_generator_prompt
 
@@ -12,7 +12,7 @@ def run_quiz_generator() -> None:
         print("\n[Error] Topic cannot be empty.")
         return
     client = build_client()
-    reasoning = choose_reasoning_level()
+    reasoning = get_reasoning_level()
     prompt = quiz_generator_prompt(topic, reasoning)
     try:
         response = client.generate(prompt, reasoning_level=reasoning)

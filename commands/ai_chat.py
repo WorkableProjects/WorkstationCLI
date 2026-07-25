@@ -1,6 +1,6 @@
 """Interactive AI chat mode backed by the shared Ollama client."""
 
-from commands.common_ai import build_client, choose_reasoning_level
+from commands.common_ai import build_client, get_reasoning_level
 from services.ollama_client import OllamaClientError
 from services.ollama_prompts import ai_chat_prompt
 
@@ -8,7 +8,7 @@ from services.ollama_prompts import ai_chat_prompt
 def run_ai_chat() -> None:
     """Run a continuous conversation until the user exits."""
     client = build_client()
-    reasoning = choose_reasoning_level()
+    reasoning = get_reasoning_level()
     messages = [{"role": "system", "content": ai_chat_prompt(reasoning)}]
     print("\nAI Chat started. Type /clear to reset history or /exit to return.\n")
     while True:

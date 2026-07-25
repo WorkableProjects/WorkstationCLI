@@ -1,8 +1,8 @@
 """Lightweight schema helpers for validating Ollama structured output."""
 
-from typing import Any
+from typing import Any, Tuple, Type, Union
 
-Schema = dict[str, type | tuple[type, ...]]
+Schema = dict[str, Union[Type[Any], Tuple[Type[Any], ...]]]
 
 QUIZ_SCHEMA: Schema = {"questions": list}
 STUDY_PLAN_SCHEMA: Schema = {"title": str, "sessions": list}

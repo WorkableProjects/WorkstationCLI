@@ -4,7 +4,7 @@ import json
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
-from typing import Any, Iterable
+from typing import Any, Optional
 
 from services.ollama_prompts import ReasoningLevel
 
@@ -34,7 +34,7 @@ class OllamaClient:
         messages: list[dict[str, str]],
         reasoning_level: ReasoningLevel = ReasoningLevel.MEDIUM,
         stream: bool = False,
-        json_schema: dict[str, Any] | None = None,
+        json_schema: Optional[dict[str, Any]] = None,
     ) -> OllamaResponse:
         """Send a chat request through Ollama and return normalized response text."""
         payload: dict[str, Any] = {

@@ -81,3 +81,29 @@ def configure_ai_settings() -> None:
 def display_ai_settings() -> str:
     """Return a short settings summary for menu display."""
     return f"Model: {settings.model} | Reasoning: {settings.reasoning_level.value}"
+
+
+
+def test_ollama_connectivity() -> None:
+    """Run an Ollama connectivity check and print actionable diagnostics."""
+    client = build_client()
+    print("\nChecking Ollama connectivity...")
+    result = client.check_connectivity()
+    status = "OK" if result.ok else "FAILED"
+    print(f"\nOllama connectivity: {status}")
+    print(f"Endpoint: {result.endpoint}")
+    if result.version:
+        print(f"Version: {result.version}")
+    print(result.message)
+    if result.models:
+        print("\nInstalled models:")
+        for model in result.models:
+            print(f"  - {model}")
+    elif result.ok:
+        print("\nNo installed models were found. Install one with the Ollama app or `ollama pull <model>`.")
+    else:
+        print("\nTroubleshooting:")
+        print("  - If the Ollama desktop app is installed, open it; you do not need `ollama serve`.")
+        print("  - Verify Settings points to http://localhost:11434/api unless you changed Ollama's host.")
+        print("  - If another process is using port 11434, change the endpoint or stop that process.")
+    input("\nPress ENTER to return to menu...")

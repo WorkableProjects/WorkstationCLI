@@ -1,7 +1,7 @@
 """Menu routing for AI-powered study commands."""
 
 from core.menu import display_menu
-from commands.common_ai import configure_ai_settings, display_ai_settings
+from commands.common_ai import configure_ai_settings, display_ai_settings, test_ollama_connectivity
 from commands.ai_chat import run_ai_chat
 from commands.essay_helper import run_essay_helper
 from commands.quiz_generator import run_quiz_generator
@@ -18,6 +18,7 @@ def run_ai_menu() -> None:
         "4": run_essay_helper,
         "5": run_socratic_tutor,
         "6": configure_ai_settings,
+        "7": test_ollama_connectivity,
     }
     while True:
         options = [
@@ -27,6 +28,7 @@ def run_ai_menu() -> None:
             ("4", "Essay Helper"),
             ("5", "Socratic Tutor"),
             ("6", f"Settings ({display_ai_settings()})"),
+            ("7", "Test Ollama Connection"),
             ("0", "Return to Main Menu"),
         ]
         choice = display_menu("AI", options)

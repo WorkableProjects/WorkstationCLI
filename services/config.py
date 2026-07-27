@@ -17,6 +17,9 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "base_url": "http://localhost:11434/api",
         "timeout": 60.0,
         "reasoning_level": ReasoningLevel.MEDIUM.value,
+    },
+    "appearance": {
+        "theme": "dark"
     }
 }
 

@@ -72,29 +72,69 @@ def run_stoichiometry_calculator() -> None:
 
 from core.console import preserve_output
 
+from core import history, navigation, exporter
+
 def _mass_moles_conversion() -> None:
-    print(format_header("MASS ⇄ MOLES CONVERSION"))
-    formula = input("Chemical Formula (e.g. H2O): ").strip()
+    navigation.push("Mass ⇄ Moles")
     try:
-        mm = get_molar_mass(formula)
-        preserve_output(f"Molar mass of {formula}: {mm:.4f} g/mol")
-        
-        mode = input("\nConvert (1) Mass -> Moles or (2) Moles -> Mass: ").strip()
-        if mode == "1":
-            mass_str = input("Enter Mass (g): ").strip()
-            mass = validate_positive_float(mass_str, "Mass")
-            moles = mass / mm
-            preserve_output(f"\nResult: {mass:.4f} g of {formula} = {moles:.6f} moles")
-        elif mode == "2":
-            moles_str = input("Enter Moles (mol): ").strip()
-            moles = validate_positive_float(moles_str, "Moles")
-            mass = moles * mm
-            preserve_output(f"\nResult: {moles:.6f} mol of {formula} = {mass:.4f} g")
-        else:
-            preserve_output("[Error] Invalid selection.")
-    except Exception as e:
-        preserve_output(f"[Error]: {e}")
-    input("\nPress ENTER to continue...")
+        print(format_header("MASS ⇄ MOLES CONVERSION"))
+        formula = input("Chemical Formula (e.g. H2O): ").strip()
+
+        # history shortcut
+        if formula.startswith("!") and formula[1:].isdigit():
+            idx = int(formula[1:])
+            prev = history.get_recent(idx)
+            if prev and prev.get("type") == "molar_mass":
+                formula = prev["params"]["formula"]
+                print(f"Re-running previous calc for: {formula}")
+            else:
+                print(f"\n[Error] No matching history entry #{idx}.")
+                input("\nPress ENTER to continue...")
+                return
+
+        try:
+            mm = get_molar_mass(formula)
+            preserve_output(f"Molar mass of {formula}: {mm:.4f} g/mol")
+            
+            mode = input("\nConvert (1) Mass -> Moles or (2) Moles -> Mass: ").strip()
+            if mode == "1":
+                mass_str = input("Enter Mass (g): ").strip()
+                mass = validate_positive_float(mass_str, "Mass")
+                moles = mass / mm
+                res = f"\nResult: {mass:.4f} g of {formula} = {moles:.6f} moles"
+                preserve_output(res)
+            elif mode == "2":
+                moles_str = input("Enter Moles (mol): ").strip()
+                moles = validate_positive_float(moles_str, "Moles")
+                mass = moles * mm
+                res = f"\nResult: {moles:.6f} mol of {formula} = {mass:.4f} g"
+                preserve_output(res)
+            else:
+                preserve_output("[Error] Invalid selection.")
+                return
+
+            # Save history
+            history.add({"type": "mass_moles", "params": {"formula": formula, "mode": mode}, "result": res})
+
+            # Offer export
+            save_choice = input("\nSave result to file? (y/N): ").strip().lower()
+            if save_choice == "y":
+                path = exporter.save_text(res, prefix="mass_moles")
+                print(f"Saved to: {path}")
+            else:
+                copy_choice = input("Copy result to clipboard? (y/N): ").strip().lower()
+                if copy_choice == "y":
+                    ok = exporter.copy_to_clipboard(res)
+                    if ok:
+                        print("Copied to clipboard.")
+                    else:
+                        print("\n[Info] Clipboard not available. Install 'pyperclip' to enable this feature.")
+
+        except Exception as e:
+            preserve_output(f"[Error]: {e}")
+        input("\nPress ENTER to continue...")
+    finally:
+        navigation.pop()
 
 def _moles_particles_conversion() -> None:
     print(format_header("MOLES ⇄ PARTICLES CONVERSION"))

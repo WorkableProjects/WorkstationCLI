@@ -113,8 +113,26 @@ def configure_ai_settings() -> None:
             print("\n[Warning] Invalid timeout. Keeping previous value.")
 
     settings.reasoning_level = choose_reasoning_level(settings.reasoning_level)
-    save_ai_settings()
-    print(f"\nAI settings saved to {CONFIG_FILE}.")
+    # Persist AI settings along with appearance preference
+    # Merge into existing config to avoid overwriting unrelated keys
+    from services.config import load_config, save_config
+    cfg = load_config()
+    cfg["ai"] = {
+        "model": settings.model,
+        "base_url": settings.base_url,
+        "timeout": settings.timeout,
+        "reasoning_level": settings.reasoning_level.value,
+    }
+    # Ask for theme preference (light/dark)
+    appearance = cfg.get("appearance", {})
+    current_theme = appearance.get("theme", "dark")
+    theme_choice = input(f"Appearance theme (light/dark) [{current_theme}]: ").strip().lower() or current_theme
+    if theme_choice not in ("light", "dark"):
+        print("\n[Warning] Invalid theme. Keeping previous value.")
+        theme_choice = current_theme
+    cfg["appearance"] = {"theme": theme_choice}
+    save_config(cfg)
+    print(f"\nSettings saved to {CONFIG_FILE}.")
     input("\nPress ENTER to return to menu...")
 
 

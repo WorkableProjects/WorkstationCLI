@@ -35,20 +35,20 @@ def _toggle_theme() -> None:
     
     cfg = load_config()
     appearance = cfg.get("appearance", {})
-    current_theme = appearance.get("theme", "dark")
+    current_theme = appearance.get("theme", "blue")
     
     print("\n" + "=" * 40)
     print(" APPEARANCE THEME ".center(40))
     print("=" * 40)
     print(f"Current theme: {theme_manager.header(current_theme)}")
     print("\nAvailable themes:")
-    print("  1. Dark")
-    print("  2. Light")
+    print("  1. Blue")
+    print("  2. Pink")
     print("=" * 40)
     
     choice = input("\nSelect theme (1 or 2): ").strip()
     
-    theme_map = {"1": "dark", "2": "light"}
+    theme_map = {"1": "blue", "2": "pink"}
     new_theme = theme_map.get(choice)
     
     if not new_theme:

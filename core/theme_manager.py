@@ -3,14 +3,14 @@
 from core.theme import get_palette
 from services.config import load_config
 
-_current_theme = "dark"
+_current_theme = "blue"
 
 
 def load_theme() -> None:
     global _current_theme
     cfg = load_config()
     appearance = cfg.get("appearance", {})
-    _current_theme = appearance.get("theme", "dark")
+    _current_theme = appearance.get("theme", "blue")
 
 
 def get_current_theme() -> str:

@@ -5,6 +5,7 @@ Education-first offline chemistry and AI CLI tool.
 """
 
 import sys
+import random
 
 from ai.menu import run_ai_menu
 from chemistry.menu import run_chemistry_menu
@@ -27,7 +28,12 @@ def main() -> None:
     while True:
         choice = display_menu("WORKSTATION CLI", main_options)
         if choice == "0":
-            print("\nThank you for using Workstation CLI! Goodbye.")
+            exit_messages = [
+                "Thanks for using Workstation CLI — see you next time!",
+                "Take care! Hope Workstation CLI helped your studies.",
+                "Goodbye! Keep experimenting safely in the lab."
+            ]
+            print("\n" + random.choice(exit_messages))
             sys.exit(0)
         handler = handlers.get(choice)
         if handler is None:
@@ -40,6 +46,10 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n\nExiting Workstation CLI...")
-        print("Goodbye!")
+        exit_messages = [
+            "Interrupted — session ended. Stay curious!",
+            "Session closed. See you again soon!",
+            "Take care! Exiting Workstation CLI."
+        ]
+        print("\n\n" + random.choice(exit_messages))
         sys.exit(0)

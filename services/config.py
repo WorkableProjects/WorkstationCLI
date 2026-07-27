@@ -58,6 +58,9 @@ def merge_defaults(config: dict[str, Any]) -> dict[str, Any]:
     ai_config = config.get("ai", {}) if isinstance(config, dict) else {}
     if isinstance(ai_config, dict):
         merged["ai"].update(ai_config)
+    appearance_config = config.get("appearance", {}) if isinstance(config, dict) else {}
+    if isinstance(appearance_config, dict):
+        merged["appearance"].update(appearance_config)
     return merged
 
 

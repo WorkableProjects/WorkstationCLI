@@ -45,14 +45,20 @@ def display_menu(title: str, options: List[Tuple[str, str]]) -> str:
         clear_navigation()
         breadcrumb = navigation.breadcrumb()
         print(f"{breadcrumb}\n")
-        print("\n" + "=" * 40)
+        
+        from core import theme_manager
+        line = "=" * 40
+        colored_line = theme_manager.colorize(line, "header")
+        colored_title = theme_manager.colorize(title, "header") if title else ""
+        
+        print("\n" + colored_line)
         if title:
-            print(f" {title.center(38)} ")
-            print("=" * 40)
+            print(f" {colored_title.center(38)} ")
+            print(colored_line)
         for idx, (key, desc) in enumerate(options):
             prefix = "> " if idx == selected_index else "  "
             print(f"{prefix}{key}. {desc}")
-        print("=" * 40)
+        print(colored_line)
 
         if _HAS_TERMIOS:
             print("\nUse Up/Down arrows to navigate, Enter to select, or type a number. Press '?' for help.")

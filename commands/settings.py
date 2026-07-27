@@ -31,6 +31,7 @@ def run_settings_menu() -> None:
 def _toggle_theme() -> None:
     """Prompt user to select a theme and save preference."""
     from core import theme_manager
+    from core.formatter import format_header
     
     cfg = load_config()
     appearance = cfg.get("appearance", {})
@@ -39,7 +40,7 @@ def _toggle_theme() -> None:
     print("\n" + "=" * 40)
     print(" APPEARANCE THEME ".center(40))
     print("=" * 40)
-    print(f"Current theme: {current_theme}")
+    print(f"Current theme: {theme_manager.header(current_theme)}")
     print("\nAvailable themes:")
     print("  1. Dark")
     print("  2. Light")
@@ -66,6 +67,13 @@ def _toggle_theme() -> None:
     # Reload theme in memory
     theme_manager.apply_theme()
     
-    print(f"\nTheme changed to {new_theme} and saved to config.")
-    print("Changes take effect immediately.")
+    print("\n" + theme_manager.ok("✓ Theme changed to ") + theme_manager.header(new_theme))
+    print(theme_manager.ok("✓ Changes saved and applied immediately."))
+    
+    # Show a preview with the new theme
+    print("\n" + format_header("THEME PREVIEW"))
+    print(theme_manager.ok("This text is OK/success"))
+    print(theme_manager.warn("This text is WARNING"))
+    print(theme_manager.error("This text is ERROR"))
+    
     input("\nPress ENTER to return...")

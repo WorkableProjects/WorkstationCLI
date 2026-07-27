@@ -1,3 +1,4 @@
+import sys
 from typing import List, Tuple, Optional
 from core.console import clear_navigation
 from core import navigation, help as helpmod

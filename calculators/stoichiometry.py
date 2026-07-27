@@ -70,28 +70,30 @@ def run_stoichiometry_calculator() -> None:
         else:
             print("\n[Error] Invalid choice.")
 
+from core.console import preserve_output
+
 def _mass_moles_conversion() -> None:
     print(format_header("MASS ⇄ MOLES CONVERSION"))
     formula = input("Chemical Formula (e.g. H2O): ").strip()
     try:
         mm = get_molar_mass(formula)
-        print(f"Molar mass of {formula}: {mm:.4f} g/mol")
+        preserve_output(f"Molar mass of {formula}: {mm:.4f} g/mol")
         
         mode = input("\nConvert (1) Mass -> Moles or (2) Moles -> Mass: ").strip()
         if mode == "1":
             mass_str = input("Enter Mass (g): ").strip()
             mass = validate_positive_float(mass_str, "Mass")
             moles = mass / mm
-            print(f"\nResult: {mass:.4f} g of {formula} = {moles:.6f} moles")
+            preserve_output(f"\nResult: {mass:.4f} g of {formula} = {moles:.6f} moles")
         elif mode == "2":
             moles_str = input("Enter Moles (mol): ").strip()
             moles = validate_positive_float(moles_str, "Moles")
             mass = moles * mm
-            print(f"\nResult: {moles:.6f} mol of {formula} = {mass:.4f} g")
+            preserve_output(f"\nResult: {moles:.6f} mol of {formula} = {mass:.4f} g")
         else:
-            print("[Error] Invalid selection.")
+            preserve_output("[Error] Invalid selection.")
     except Exception as e:
-        print(f"[Error]: {e}")
+        preserve_output(f"[Error]: {e}")
     input("\nPress ENTER to continue...")
 
 def _moles_particles_conversion() -> None:

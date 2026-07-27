@@ -21,10 +21,24 @@ REASONING_INSTRUCTIONS: dict[ReasoningLevel, str] = {
 
 
 def build_system_prompt(feature: str, reasoning_level: ReasoningLevel) -> str:
-    """Build a system prompt that emulates the selected reasoning level for any model."""
+    """Build a system prompt that emulates the selected reasoning level for any model.
+
+    Injects runtime context so the AI knows it's operating inside Workstation CLI,
+    what tools are available, and that a local model (Ollama) may be configured.
+    """
+    # Minimal runtime context is provided without importing config to avoid
+    # circular dependencies in the services package.
+    runtime_context = (
+        "Running inside Workstation CLI (educational chemistry and AI tools). "
+        "Available tools: chemistry calculators (molar mass, stoichiometry, periodic table), "
+        "reference lookups, and an interactive AI chat backed by a local Ollama service if configured. "
+    )
+
     return (
         "You are Workstation CLI's educational AI assistant. "
         f"Feature: {feature}. "
+        f"CLI Version: v0.0.4. "
+        f"{runtime_context}"
         "Help students learn while being accurate, clear, and safe. "
         f"Reasoning mode ({reasoning_level.value}): {REASONING_INSTRUCTIONS[reasoning_level]}"
     )

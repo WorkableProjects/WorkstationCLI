@@ -1,5 +1,6 @@
 from utils.parser import parse_chemical_formula, load_periodic_table
 from core.formatter import format_header, format_table
+from core.console import preserve_output
 
 def run_molar_mass_calculator() -> None:
     print(format_header("MOLAR MASS CALCULATOR"))
@@ -43,13 +44,16 @@ def run_molar_mass_calculator() -> None:
                 f"{percent:.2f}%"
             ])
 
-        print("\nBreakdown:")
-        print(format_table(headers, rows))
-        print("-" * 50)
-        print(f"Total Molar Mass of {formula_input}: {total_molar_mass:.4f} g/mol")
-        print("-" * 50)
+        out_lines = []
+        out_lines.append("Breakdown:")
+        out_lines.append(format_table(headers, rows))
+        out_lines.append("-" * 50)
+        out_lines.append(f"Total Molar Mass of {formula_input}: {total_molar_mass:.4f} g/mol")
+        out_lines.append("-" * 50)
+
+        preserve_output('\n'.join(out_lines))
 
     except Exception as e:
-        print(f"\n[Error] Failed to calculate molar mass: {e}")
+        preserve_output(f"\n[Error] Failed to calculate molar mass: {e}")
 
     input("\nPress ENTER to return to menu...")

@@ -13,6 +13,7 @@ from chemistry.menu import run_chemistry_menu
 from core.about import display_about
 from core.banner import display_banner
 from core.menu import display_menu
+from commands.settings import run_settings_menu
 
 
 def main() -> None:
@@ -24,10 +25,16 @@ def main() -> None:
     main_options = [
         ("1", "Chemistry"),
         ("2", "AI"),
-        ("3", "CLI Information"),
+        ("3", "Settings"),
+        ("4", "CLI Information"),
         ("0", "Exit"),
     ]
-    handlers = {"1": run_chemistry_menu, "2": run_ai_menu, "3": display_about}
+    handlers = {
+        "1": run_chemistry_menu,
+        "2": run_ai_menu,
+        "3": run_settings_menu,
+        "4": display_about
+    }
 
     while True:
         choice = display_menu("WORKSTATION CLI", main_options)

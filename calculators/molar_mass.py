@@ -6,6 +6,7 @@ from core import exporter
 
 
 def run_molar_mass_calculator() -> None:
+    from core import theme_manager
     navigation.push("Molar Mass")
     try:
         print(format_header("MOLAR MASS CALCULATOR"))
@@ -13,7 +14,7 @@ def run_molar_mass_calculator() -> None:
         formula_input = input("\nFormula: ").strip()
 
         if not formula_input:
-            print("\n[Error] Formula cannot be empty.")
+            print("\n" + theme_manager.error("[Error] Formula cannot be empty."))
             input("\nPress ENTER to return...")
             return
 
@@ -25,7 +26,7 @@ def run_molar_mass_calculator() -> None:
                 formula_input = prev["params"]["formula"]
                 print(f"Re-running previous molar mass for: {formula_input}")
             else:
-                print(f"\n[Error] No molar mass history entry #{idx}.")
+                print("\n" + theme_manager.error(f"[Error] No molar mass history entry #{idx}."))
                 input("\nPress ENTER to continue...")
                 return
 

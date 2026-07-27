@@ -7,6 +7,7 @@ Education-first offline chemistry and AI CLI tool.
 import sys
 import random
 
+from core import theme_manager
 from ai.menu import run_ai_menu
 from chemistry.menu import run_chemistry_menu
 from core.about import display_about
@@ -16,6 +17,9 @@ from core.menu import display_menu
 
 def main() -> None:
     """Launch the category-based Workstation CLI menu."""
+    # Load and apply theme on startup
+    theme_manager.apply_theme()
+    
     display_banner()
     main_options = [
         ("1", "Chemistry"),

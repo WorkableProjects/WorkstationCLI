@@ -15,7 +15,7 @@ def display_about() -> None:
     # Credits section (added for v0.0.4)
     print("\nCREDITS:\n")
     print("  - Local model support: Ollama")
-    print("  - Models: Mistral, Gemma, and other community projects")
+    print("  - Models: Llama, Gemma, etc.")
     print("  - Project: Workstation CLI — Workable Projects / Dutchh")
     print("\nFor more info or links, see the project README.")
     input("\nPress ENTER to return to the main menu...")

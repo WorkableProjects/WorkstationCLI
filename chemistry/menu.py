@@ -15,6 +15,7 @@ from core import navigation
 
 def run_chemistry_menu() -> None:
     """Display the chemistry submenu and route to existing chemistry commands."""
+    from core import theme_manager
     navigation.push("Chemistry")
     try:
         options = [
@@ -47,7 +48,7 @@ def run_chemistry_menu() -> None:
                 return
             handler = handlers.get(choice)
             if handler is None:
-                print("\n[Error] Invalid selection. Please choose an option from the menu.")
+                print("\n" + theme_manager.error("[Error] Invalid selection. Please choose an option from the menu."))
                 continue
             handler()
     finally:

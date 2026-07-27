@@ -11,6 +11,7 @@ def load_reference_data() -> dict:
         return json.load(f)
 
 def run_chemistry_reference() -> None:
+    from core import theme_manager
     ref_data = load_reference_data()
     
     while True:
@@ -40,7 +41,7 @@ def run_chemistry_reference() -> None:
         elif choice == "0":
             break
         else:
-            print("\n[Error] Invalid choice.")
+            print("\n" + theme_manager.error("[Error] Invalid choice."))
 
 def _lookup_element() -> None:
     from core import navigation

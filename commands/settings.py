@@ -8,7 +8,7 @@ def run_settings_menu() -> None:
     """Display settings menu for appearance, theme, and other CLI preferences."""
     while True:
         options = [
-            ("1", "Change Theme (Light/Dark)"),
+            ("1", "Change Theme"),
             ("2", "View Config File Location"),
             ("0", "Return to Main Menu"),
         ]

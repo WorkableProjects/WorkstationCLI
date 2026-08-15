@@ -7,6 +7,8 @@ Provides:
 """
 from typing import List
 
+from core.banner import display_banner
+
 _preserved_buffer: List[str] = []
 
 
@@ -22,13 +24,17 @@ def preserve_output(text: str) -> None:
 
 
 def clear_navigation() -> None:
-    """Clear the terminal navigation/menu area but reprint preserved outputs.
+    """Clear the terminal, then re-render the persistent banner and preserved outputs.
 
-    Uses a full-screen clear then renders preserved calculation outputs for
-    user reference.
+    Performs a full-screen clear, then re-prints the startup banner and any
+    preserved calculation outputs so they stay visible while the menu below is
+    redrawn on navigation. The banner therefore remains at the top of the
+    screen instead of disappearing or leaving a blank gap.
     """
     # ANSI full clear + move cursor home
     print("\033[2J\033[H", end="")
+    # Keep the ASCII banner visible above the menu on every redraw.
+    display_banner()
     if _preserved_buffer:
         print("""
 --- Preserved Output (previous calculations) ---

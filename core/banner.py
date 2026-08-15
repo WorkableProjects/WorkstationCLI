@@ -1,4 +1,4 @@
-VERSION = "0.0.4"
+VERSION = "0.0.4.1"
 ORGANIZATION = "Workable Projects"
 AUTHOR = "Dutchh"
 

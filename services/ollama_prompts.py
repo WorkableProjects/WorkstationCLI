@@ -37,7 +37,7 @@ def build_system_prompt(feature: str, reasoning_level: ReasoningLevel) -> str:
     return (
         "You are Workstation CLI's educational AI assistant. "
         f"Feature: {feature}. "
-        f"CLI Version: v0.0.4. "
+        f"CLI Version: v0.0.4.1. "
         f"{runtime_context}"
         "Help students learn while being accurate, clear, and safe. "
         f"Reasoning mode ({reasoning_level.value}): {REASONING_INSTRUCTIONS[reasoning_level]}"

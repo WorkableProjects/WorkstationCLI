@@ -42,13 +42,26 @@ def _toggle_theme() -> None:
     print("=" * 40)
     print(f"Current theme: {theme_manager.header(current_theme)}")
     print("\nAvailable themes:")
-    print("  1. Blue")
-    print("  2. Pink")
+    print("  1. Blue (Dark Blue)")
+    print("  2. Pink (Refined Pink)")
+    print("  3. Red")
+    print("  4. Orange")
+    print("  5. Green")
+    print("  6. Cyan")
+    print("  7. Black (High Contrast)")
     print("=" * 40)
     
-    choice = input("\nSelect theme (1 or 2): ").strip()
+    choice = input("\nSelect theme (1-7): ").strip()
     
-    theme_map = {"1": "blue", "2": "pink"}
+    theme_map = {
+        "1": "blue",
+        "2": "pink",
+        "3": "red",
+        "4": "orange",
+        "5": "green",
+        "6": "cyan",
+        "7": "black"
+    }
     new_theme = theme_map.get(choice)
     
     if not new_theme:

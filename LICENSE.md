@@ -1,9 +1,9 @@
-# WorkstationCLI License  
+# Workstation CLI License
 
-Copyright (c) 2026 WorkableProjects; Dutchh (I4mDutch on github)
+Copyright (c) 2026 **Workable Projects**; **Dutchh** (`I4mDutch` on GitHub).
 
-**Grant of Use**  
-Permission is granted to any individual or entity to use the WorkstationCLI software (“Software”) for personal or internal purposes only.  
+## Grant of Use
+Permission is granted to any individual or entity to use the Workstation CLI software (“Software”) for personal or internal educational and non-commercial purposes.
 
 **Restrictions**  
 Except as expressly permitted by applicable copyright law, you may not:  

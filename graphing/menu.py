@@ -26,8 +26,13 @@ def run_custom_function_plot() -> None:
     x_min_str = input("Enter x min [-10.0]: ").strip()
     x_max_str = input("Enter x max [10.0]: ").strip()
 
-    x_min = float(x_min_str) if x_min_str else -10.0
-    x_max = float(x_max_str) if x_max_str else 10.0
+    try:
+        x_min = float(x_min_str) if x_min_str else -10.0
+        x_max = float(x_max_str) if x_max_str else 10.0
+    except ValueError:
+        print(theme_manager.error("[Error] Invalid numeric value for domain bounds."))
+        input("\nPress ENTER to continue...")
+        return
 
     if x_min >= x_max:
         print(theme_manager.error("[Error] Minimum x must be less than maximum x."))

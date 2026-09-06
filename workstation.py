@@ -10,6 +10,7 @@ import random
 from core import theme_manager
 from ai.menu import run_ai_menu
 from chemistry.menu import run_chemistry_menu
+from graphing.menu import run_graphing_menu
 from core.about import display_about
 from core.banner import display_banner
 from core.menu import display_menu
@@ -25,15 +26,17 @@ def main() -> None:
     main_options = [
         ("1", "Chemistry"),
         ("2", "AI"),
-        ("3", "Settings"),
-        ("4", "CLI Information"),
+        ("3", "Graphing"),
+        ("4", "Settings"),
+        ("5", "CLI Information"),
         ("0", "Exit"),
     ]
     handlers = {
         "1": run_chemistry_menu,
         "2": run_ai_menu,
-        "3": run_settings_menu,
-        "4": display_about
+        "3": run_graphing_menu,
+        "4": run_settings_menu,
+        "5": display_about
     }
 
     while True:

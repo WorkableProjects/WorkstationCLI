@@ -2,7 +2,7 @@
 
 All notable changes to Workstation CLI will be documented in this file.
 
-## [0.0.5.0] - 2026
+## [0.0.5.0(b)] - September 6, 2026
 
 ### Added
 - **Graphing Tool**: New top-tier main menu category alongside Chemistry and AI.

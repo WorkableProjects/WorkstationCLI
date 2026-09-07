@@ -32,11 +32,26 @@ def _get_key() -> str:
         tty.setraw(fd)
         ch = sys.stdin.read(1)
         if ch == "\x1b":
+            # Direct read for arrow key escape sequence [A, [B, [C, [D
             import select
-            r, _, _ = select.select([sys.stdin], [], [], 0.15)
+            r, _, _ = select.select([sys.stdin], [], [], 0.05)
             if r:
                 seq = sys.stdin.read(2)
                 return ch + seq
+            # Non-blocking fallback try if select didn't catch buffered bytes
+            try:
+                import fcntl, os
+                fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+                fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+                try:
+                    seq = sys.stdin.read(2)
+                    return ch + seq
+                except Exception:
+                    pass
+                finally:
+                    fcntl.fcntl(fd, fcntl.F_SETFL, fl)
+            except Exception:
+                pass
             return "\x1b"
         return ch
     finally:
@@ -180,16 +195,16 @@ class GridSelector:
 
                 if _HAS_TERMIOS:
                     key = _get_key()
-                    if key in ("\x1b[A", "w", "k"):  # Up
+                    if key in ("\x1b[A", "\x1bOA", "w", "W", "k", "K"):  # Up
                         self.move_cursor(-1, 0)
                         continue
-                    elif key in ("\x1b[B", "s", "j") and key != "s":  # Down
+                    elif key in ("\x1b[B", "\x1bOB", "j", "J"):  # Down
                         self.move_cursor(1, 0)
                         continue
-                    elif key in ("\x1b[D", "a", "h"):  # Left
+                    elif key in ("\x1b[D", "\x1bOD", "a", "A", "h", "H"):  # Left
                         self.move_cursor(0, -1)
                         continue
-                    elif key in ("\x1b[C", "d", "l"):  # Right
+                    elif key in ("\x1b[C", "\x1bOC", "d", "D", "l", "L"):  # Right
                         self.move_cursor(0, 1)
                         continue
                     elif key in ("\r", "\n"):  # Enter
@@ -199,7 +214,7 @@ class GridSelector:
                             if not stay:
                                 break
                         continue
-                    elif key in ("/", "s"):  # Search
+                    elif key in ("/", "s", "S"):  # Search
                         self._handle_search()
                         continue
                     elif key in ("q", "Q", "0"):

@@ -84,6 +84,30 @@ class TestPeriodicTable(unittest.TestCase):
         self.assertIn("4s¹", formatted)
         self.assertIn("3d¹⁰", formatted)
 
+    def test_grid_selector_cursor_navigation(self):
+        from core.ui import GridSelector
+        pt_data = load_periodic_table()
+        selector = GridSelector(
+            title="Test Grid",
+            grid_matrix=PERIODIC_TABLE_GRID,
+            items_dict=pt_data,
+            tile_renderer=lambda k, d, sel, comp: ""
+        )
+        # Initial selection is H at (0, 0)
+        self.assertEqual(selector.get_selected_key(), "H")
+
+        # Move right from (0, 0) -> skips empty slots (cols 1..16) and lands on He at (0, 17)
+        selector.move_cursor(0, 1)
+        self.assertEqual(selector.get_selected_key(), "He")
+
+        # Move down from He (0, 17) -> lands on Ne at (1, 17)
+        selector.move_cursor(1, 0)
+        self.assertEqual(selector.get_selected_key(), "Ne")
+
+        # Move left from Ne (1, 17) -> lands on F at (1, 16)
+        selector.move_cursor(0, -1)
+        self.assertEqual(selector.get_selected_key(), "F")
+
     def test_format_element_detail_contains_target_fields(self):
         res = find_element("Au")
         detail = format_element_detail("Au", res[1])

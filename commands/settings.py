@@ -7,9 +7,14 @@ from services.config import load_config, save_config
 def run_settings_menu() -> None:
     """Display settings menu for appearance, theme, and other CLI preferences."""
     while True:
+        cfg = load_config()
+        anim_enabled = cfg.get("appearance", {}).get("startup_animation", True)
+        anim_status = "Enabled" if anim_enabled else "Disabled"
+
         options = [
             ("1", "Change Theme"),
-            ("2", "View Config File Location"),
+            ("2", f"Toggle Startup Animation ({anim_status})"),
+            ("3", "View Config File Location"),
             ("0", "Return to Main Menu"),
         ]
         choice = display_menu("SETTINGS", options)
@@ -17,6 +22,8 @@ def run_settings_menu() -> None:
         if choice == "1":
             _toggle_theme()
         elif choice == "2":
+            _toggle_animation()
+        elif choice == "3":
             from services.config import CONFIG_FILE
             print(f"\nConfig file location: {CONFIG_FILE}")
             print("Edit manually to change other settings.")
@@ -26,6 +33,19 @@ def run_settings_menu() -> None:
         else:
             from core import theme_manager
             print("\n" + theme_manager.error("[Error] Invalid selection."))
+
+
+def _toggle_animation() -> None:
+    """Toggle startup animation preference."""
+    from core import theme_manager
+    cfg = load_config()
+    current = cfg.get("appearance", {}).get("startup_animation", True)
+    new_val = not current
+    cfg["appearance"]["startup_animation"] = new_val
+    save_config(cfg)
+    status_str = "Enabled" if new_val else "Disabled"
+    print("\n" + theme_manager.ok(f"✓ Startup animation is now {status_str}."))
+    input("\nPress ENTER to return...")
 
 
 def _toggle_theme() -> None:
@@ -74,7 +94,7 @@ def _toggle_theme() -> None:
         input("\nPress ENTER to return...")
         return
     
-    cfg["appearance"] = {"theme": new_theme}
+    cfg["appearance"]["theme"] = new_theme
     save_config(cfg)
     
     # Reload theme in memory

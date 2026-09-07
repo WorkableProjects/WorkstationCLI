@@ -19,7 +19,8 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "reasoning_level": ReasoningLevel.MEDIUM.value,
     },
     "appearance": {
-        "theme": "blue"
+        "theme": "blue",
+        "startup_animation": True,
     }
 }
 

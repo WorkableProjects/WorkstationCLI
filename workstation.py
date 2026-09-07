@@ -12,48 +12,61 @@ from ai.menu import run_ai_menu
 from chemistry.menu import run_chemistry_menu
 from graphing.menu import run_graphing_menu
 from core.about import display_about
-from core.banner import display_banner
-from core.menu import display_menu
+from core.banner import display_startup_animation
 from commands.settings import run_settings_menu
+from core.ui import HorizontalTabMenu
 
 
 def main() -> None:
-    """Launch the category-based Workstation CLI menu."""
+    """Launch the category-based Workstation CLI tabbed menu."""
     # Load and apply theme on startup
     theme_manager.apply_theme()
     
-    display_banner()
-    main_options = [
-        ("1", "Chemistry"),
-        ("2", "AI"),
-        ("3", "Graphing"),
-        ("4", "Settings"),
-        ("5", "CLI Information"),
-        ("0", "Exit"),
-    ]
-    handlers = {
-        "1": run_chemistry_menu,
-        "2": run_ai_menu,
-        "3": run_graphing_menu,
-        "4": run_settings_menu,
-        "5": display_about
-    }
+    display_startup_animation()
 
-    while True:
-        choice = display_menu("WORKSTATION CLI", main_options)
-        if choice == "0":
-            exit_messages = [
-                "Thanks for using Workstation CLI — see you next time!",
-                "Take care! Hope Workstation CLI helped your studies.",
-                "Goodbye! Keep experimenting safely in the lab."
+    tabs = [
+        {
+            "name": "Chemistry",
+            "options": [
+                ("Open Chemistry Menu", run_chemistry_menu),
             ]
-            print("\n" + random.choice(exit_messages))
-            sys.exit(0)
-        handler = handlers.get(choice)
-        if handler is None:
-            print("\n[Error] Invalid selection. Please choose an option from the menu.")
-            continue
-        handler()
+        },
+        {
+            "name": "AI",
+            "options": [
+                ("Open AI Menu", run_ai_menu),
+            ]
+        },
+        {
+            "name": "Graphing",
+            "options": [
+                ("Open Graphing Menu", run_graphing_menu),
+            ]
+        },
+        {
+            "name": "Settings",
+            "options": [
+                ("Open Settings Menu", run_settings_menu),
+            ]
+        },
+        {
+            "name": "About",
+            "options": [
+                ("View CLI Information", display_about),
+            ]
+        }
+    ]
+
+    menu = HorizontalTabMenu("WORKSTATION CLI", tabs)
+    menu.run()
+
+    exit_messages = [
+        "Thanks for using Workstation CLI — see you next time!",
+        "Take care! Hope Workstation CLI helped your studies.",
+        "Goodbye! Keep experimenting safely in the lab."
+    ]
+    print("\n" + random.choice(exit_messages))
+    sys.exit(0)
 
 
 if __name__ == "__main__":

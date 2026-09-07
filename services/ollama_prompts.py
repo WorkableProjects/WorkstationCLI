@@ -1,6 +1,7 @@
 """Centralized prompt templates for Ollama-backed AI commands."""
 
 from enum import Enum
+from core.banner import VERSION
 
 
 class ReasoningLevel(str, Enum):

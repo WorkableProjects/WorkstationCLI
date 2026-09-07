@@ -5,10 +5,11 @@
 Made by **Workable Projects** (Created by **Dutchh**).
 
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-1.0.0-green)]()
+[![Version](https://img.shields.io/badge/version-1.1.0-green)]()
+[![WGI Version](https://img.shields.io/badge/WGI-0.0.1-blue)]()
 [![License](https://img.shields.io/badge/license-WCLI.L-blue)](https://github.com/WorkableProjects/WorkstationCLI/blob/main/LICENSE.md)
 
-Version 1.0.0 (Release 1)
+Workstation CLI v1.1.0 (Release 1.1) / Workstation Graphical Interface (WGI) v0.0.1
 
 ## Requirements
 
@@ -25,6 +26,14 @@ cd WorkstationCLI
 # Run Workstation CLI
 python3 workstation.py
 ```
+
+## Workstation Graphical Interface (WGI)
+
+R1.1 introduces **WGI**, an optional browser-based graphical workspace extension for Workstation CLI.
+
+- **Enabling WGI**: Go to `Settings` -> `Extensions` or edit `~/.workstation_cli/config.json` (`wgi.enabled: true`).
+- **Accessing WGI**: When enabled, start Workstation to launch the local web server at `http://127.0.0.1:8080` (or run `workstation wgi`).
+- **Features**: Browser desktop interface, project file tree, Markdown viewer, python script launcher windows, multi-terminal sessions, Command Palette integration, and persisted browser layout state.
 
 ## Key Features
 

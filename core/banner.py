@@ -1,7 +1,8 @@
 import sys
 import time
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
+WGI_VERSION = "0.0.1"
 ORGANIZATION = "Workable Projects"
 AUTHOR = "Dutchh"
 
@@ -40,7 +41,7 @@ def display_banner(animated: bool = False) -> None:
     else:
         print(BANNER_TEXT)
 
-    print("Version: R1")
+    print("Version: R1.1 (CLI v1.1.0 | WGI v0.0.1)")
     print(f"Made by {ORGANIZATION}")
     print("-" * 50)
 

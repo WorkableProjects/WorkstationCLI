@@ -38,13 +38,18 @@ from graphing.menu import (
 )
 
 # Import Settings tools
-from commands.settings import toggle_theme, toggle_startup_animation, get_animation_status, show_config_location
+from commands.settings import toggle_theme, toggle_startup_animation, get_animation_status, show_config_location, run_wgi_settings_menu
+from extensions.manager import extension_manager
 
 
 def main() -> None:
     """Launch the category-based Workstation CLI tabbed menu."""
     # Load and apply theme on startup
     theme_manager.apply_theme()
+
+    # Load extensions and start enabled extensions (e.g., WGI server)
+    extension_manager.load_built_in_extensions()
+    extension_manager.start_enabled_extensions()
     
     display_startup_animation()
 
@@ -91,6 +96,7 @@ def main() -> None:
                 (lambda: f"Toggle Startup Animation ({get_animation_status()})", toggle_startup_animation),
                 ("AI & Model Configuration", configure_ai_settings),
                 ("Graphing Defaults Configuration", run_plot_settings_menu),
+                ("WGI Extension Configuration", run_wgi_settings_menu),
                 ("View Config File Location", show_config_location),
             ]
         },

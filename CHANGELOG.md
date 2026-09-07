@@ -2,6 +2,22 @@
 
 All notable changes to Workstation CLI will be documented in this file.
 
+## [R1.1 (1.1.0) / WGI 0.0.1] - September 7, 2026
+
+### Added
+- **Workstation Graphical Interface (WGI) v0.0.1**:
+  - Optional extension launching a local web workspace server (localhost only).
+  - Browser desktop layout with Workstation logo, sidebar file explorer, Markdown documentation viewer, Python script runner windows, and multi-terminal sessions.
+  - Shared Command Palette integration across CLI and WGI.
+  - UI state persistence via browser local storage.
+  - Local configuration settings (`wgi.enabled`, `wgi.host`, `wgi.port`, `wgi.auto_open`).
+- **Extension Infrastructure**:
+  - Plugin/extension loading framework (`extensions/manager.py`).
+  - Shared command registry (`core/command_palette.py` & `core/registry.py`).
+
+### Changed
+- Upgraded CLI version string to `1.1.0` (Release R1.1) and added WGI version `0.0.1` display on banner, about screen, and documentation.
+
 ## [R1 (1.0.0)] - September 7, 2026
 
 ### Added

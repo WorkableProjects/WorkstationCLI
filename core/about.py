@@ -1,11 +1,12 @@
-from core.banner import VERSION, ORGANIZATION, AUTHOR
+from core.banner import VERSION, WGI_VERSION, ORGANIZATION, AUTHOR
 
 def display_about() -> None:
     print("\n" + "=" * 50)
     print("           CLI INFORMATION PAGE           ")
     print("=" * 50)
     print(f"  Application : Workstation CLI")
-    print("  Version     : R1")
+    print(f"  CLI Version : R1.1 (v{VERSION})")
+    print(f"  WGI Version : v{WGI_VERSION}")
     print(f"  Author(s)   : {AUTHOR}")
     print(f"  Organization: {ORGANIZATION}")
     print("=" * 50)

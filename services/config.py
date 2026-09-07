@@ -28,6 +28,12 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "width": 50,
         "height": 20,
         "auto_y": True,
+    },
+    "wgi": {
+        "enabled": False,
+        "host": "127.0.0.1",
+        "port": 8080,
+        "auto_open": True,
     }
 }
 
@@ -72,6 +78,9 @@ def merge_defaults(config: dict[str, Any]) -> dict[str, Any]:
     graphing_config = config.get("graphing", {}) if isinstance(config, dict) else {}
     if isinstance(graphing_config, dict):
         merged["graphing"].update(graphing_config)
+    wgi_config = config.get("wgi", {}) if isinstance(config, dict) else {}
+    if isinstance(wgi_config, dict):
+        merged["wgi"].update(wgi_config)
     return merged
 
 

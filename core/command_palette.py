@@ -34,38 +34,33 @@ def _get_key() -> str:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
+from core.registry import registry
+
 class CommandPalette:
     """
     Searchable palette for launching any tool across categories.
     """
 
-    def __init__(self, commands: List[Dict[str, Any]]):
-        """
-        commands list structure:
-        [
-            {
-                "name": "Molar Mass Calculator",
-                "category": "Chemistry",
-                "keywords": "mass mole chemistry weight",
-                "handler": callable
-            }, ...
-        ]
-        """
-        self.commands = commands
+    def __init__(self, commands: Optional[List[Dict[str, Any]]] = None):
+        if commands:
+            self.commands = commands
+        else:
+            self.commands = registry.get_all()
 
     def search(self, query: str) -> List[Dict[str, Any]]:
-        if not query.strip():
-            return self.commands
-
-        q = query.lower().strip()
-        results = []
-        for cmd in self.commands:
-            name = cmd["name"].lower()
-            cat = cmd["category"].lower()
-            kw = cmd.get("keywords", "").lower()
-            if q in name or q in cat or q in kw:
-                results.append(cmd)
-        return results
+        if hasattr(self, 'commands') and self.commands != registry.get_all():
+            if not query.strip():
+                return self.commands
+            q = query.lower().strip()
+            results = []
+            for cmd in self.commands:
+                name = cmd["name"].lower()
+                cat = cmd["category"].lower()
+                kw = cmd.get("keywords", "").lower()
+                if q in name or q in cat or q in kw:
+                    results.append(cmd)
+            return results
+        return registry.search(query)
 
     def run(self) -> None:
         """Run the interactive Command Palette prompt."""

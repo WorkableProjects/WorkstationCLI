@@ -4,15 +4,15 @@ from core.banner import VERSION, display_banner, display_startup_animation
 
 
 def test_banner_version():
-    """Verify banner version is updated to 1.0.0."""
-    assert VERSION == "1.0.0"
+    """Verify banner version is updated to 1.1.0."""
+    assert VERSION == "1.1.0"
 
 
 def test_display_banner(capsys):
     """Verify display_banner prints expected version and organization info."""
     display_banner(animated=False)
     captured = capsys.readouterr()
-    assert "Version: R1" in captured.out
+    assert "Version: R1.1 (CLI v1.1.0 | WGI v0.0.1)" in captured.out
     assert "Made by Workable Projects" in captured.out
 
 
@@ -20,4 +20,4 @@ def test_display_startup_animation(capsys):
     """Verify display_startup_animation runs without errors."""
     display_startup_animation()
     captured = capsys.readouterr()
-    assert "Version: R1" in captured.out
+    assert "Version: R1.1 (CLI v1.1.0 | WGI v0.0.1)" in captured.out

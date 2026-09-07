@@ -1,0 +1,3 @@
+"""
+WGI package initialization.
+"""

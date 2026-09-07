@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workstation Graphical Interface (WGI)</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Top Header / App Bar -->
+    <header class="app-header">
+      <div class="logo-container">
+        <img src="logo.png" alt="Workstation Logo" class="app-logo" onerror="this.style.display='none'">
+        <span class="app-title">WORKSTATION <small class="version-tag">CLI v1.1.0 | WGI v0.0.1</small></span>
+      </div>
+      <div class="header-center">
+        <button id="btn-command-palette" class="palette-btn">
+          <span>🔍 Search Workstation... (Ctrl+K)</span>
+        </button>
+      </div>
+      <div class="header-right">
+        <button id="btn-new-terminal" class="action-btn">+ New Terminal</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <!-- Left Sidebar File Explorer -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">PROJECT EXPLORER</span>
+        </div>
+        <div id="file-tree" class="file-tree">
+          <div class="tree-loading">Loading project files...</div>
+        </div>
+      </aside>
+
+      <!-- Desktop Workspace Area -->
+      <main class="desktop" id="desktop">
+        <!-- Desktop Windows Container -->
+        <div id="windows-container"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Command Palette Modal -->
+  <div id="modal-command-palette" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <input type="text" id="palette-search-input" placeholder="Type a command or tool name..." autofocus>
+      </div>
+      <div id="palette-results" class="palette-results"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

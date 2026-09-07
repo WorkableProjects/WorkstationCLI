@@ -2,7 +2,7 @@
 
 All notable changes to Workstation CLI will be documented in this file.
 
-## [0.0.7] - March 3, 2025
+## [0.0.7] - September 7, 2026
 
 ### Added
 - **UI Navigation Overhaul (v0.0.6.3)**:
@@ -27,7 +27,7 @@ All notable changes to Workstation CLI will be documented in this file.
 - Upgraded version string to `0.0.7` across `core/banner.py`, `services/ollama_prompts.py`, and `README.md`.
 - Consolidated all v0.0.6.2 - v0.0.6.5 features into the official v0.0.7 overhaul release.
 
-## [0.0.6] - March 3, 2025
+## [0.0.6] - September 6/7, 2026
 
 ### Added
 - **Interactive Chemistry & Periodic Table**:

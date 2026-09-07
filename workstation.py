@@ -102,7 +102,20 @@ def main() -> None:
         }
     ]
 
-    menu = HorizontalTabMenu("WORKSTATION CLI", tabs)
+    palette_commands = []
+    for tab in tabs:
+        cat_name = tab["name"]
+        for opt in tab.get("options", []):
+            opt_label, handler = opt
+            label_str = opt_label() if callable(opt_label) else str(opt_label)
+            palette_commands.append({
+                "name": label_str,
+                "category": cat_name,
+                "keywords": f"{label_str} {cat_name}".lower(),
+                "handler": handler
+            })
+
+    menu = HorizontalTabMenu("WORKSTATION CLI", tabs, palette_commands=palette_commands)
     menu.run()
 
     exit_messages = [

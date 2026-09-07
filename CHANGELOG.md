@@ -2,6 +2,23 @@
 
 All notable changes to Workstation CLI will be documented in this file.
 
+## [R1 (1.0.0)] - September 7, 2026
+
+### Added
+- **Command Palette (`Ctrl+K` or `/`)**:
+  - Global searchable action palette to quickly search and launch any tool, calculator, graphing utility, AI assistant, or setting.
+- **Standardized Input System & Universal Output Actions**:
+  - Reusable form/input prompts (`prompt_input`, `prompt_float`, `prompt_int`, `prompt_yes_no`) with validation, default value hints, and cancel support.
+  - Universal output action menu bar offering `[Copy]`, `[Save]`, `[Export]`, `[Send to AI]`, and `[Back]` across result screens.
+- **Session Context Infrastructure**:
+  - Session data management (`set_session_data`, `get_session_data`, `clear_session`) in `core/history.py` to preserve runtime state without polluting persistent configuration.
+- **Requirements Clarification**:
+  - Explicitly documented requirement for Python 3.11+.
+
+### Changed
+- Upgraded version string to `1.0.0` (Release 1) across `core/banner.py`, `services/ollama_prompts.py`, `core/about.py`, `README.md`, and application metadata.
+- Consolidated code structure and refactored UI components for 1.0.0 stabilization release.
+
 ## [0.0.7] - September 7, 2026
 
 ### Added

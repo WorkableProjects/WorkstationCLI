@@ -5,7 +5,7 @@ def display_about() -> None:
     print("           CLI INFORMATION PAGE           ")
     print("=" * 50)
     print(f"  Application : Workstation CLI")
-    print(f"  Version     : {VERSION}")
+    print("  Version     : R1")
     print(f"  Author(s)   : {AUTHOR}")
     print(f"  Organization: {ORGANIZATION}")
     print("=" * 50)

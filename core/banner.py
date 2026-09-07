@@ -1,7 +1,7 @@
 import sys
 import time
 
-VERSION = "0.0.7"
+VERSION = "1.0.0"
 ORGANIZATION = "Workable Projects"
 AUTHOR = "Dutchh"
 
@@ -40,7 +40,7 @@ def display_banner(animated: bool = False) -> None:
     else:
         print(BANNER_TEXT)
 
-    print(f"Version: {VERSION}")
+    print("Version: R1")
     print(f"Made by {ORGANIZATION}")
     print("-" * 50)
 

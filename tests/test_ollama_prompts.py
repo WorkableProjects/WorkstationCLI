@@ -19,7 +19,7 @@ def test_build_system_prompt_content():
     assert "Study Planner" in prompt
     assert "Problem Solver" in prompt
     assert "Feature Context: AI Chat" in prompt
-    assert "v0.0.7" in prompt
+    assert "v1.0.0" in prompt
     assert "Reasoning Mode (Medium): Plan before answering. Explain key decisions. Self-check conclusions." in prompt
 
 

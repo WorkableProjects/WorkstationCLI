@@ -21,6 +21,13 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "appearance": {
         "theme": "blue",
         "startup_animation": True,
+    },
+    "graphing": {
+        "x_min": -10.0,
+        "x_max": 10.0,
+        "width": 50,
+        "height": 20,
+        "auto_y": True,
     }
 }
 
@@ -62,6 +69,9 @@ def merge_defaults(config: dict[str, Any]) -> dict[str, Any]:
     appearance_config = config.get("appearance", {}) if isinstance(config, dict) else {}
     if isinstance(appearance_config, dict):
         merged["appearance"].update(appearance_config)
+    graphing_config = config.get("graphing", {}) if isinstance(config, dict) else {}
+    if isinstance(graphing_config, dict):
+        merged["graphing"].update(graphing_config)
     return merged
 
 

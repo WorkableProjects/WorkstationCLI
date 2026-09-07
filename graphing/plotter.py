@@ -2,6 +2,7 @@
 
 import math
 import re
+from pathlib import Path
 from typing import Callable, Tuple, List, Optional, Dict, Any, Union
 
 SAFE_MATH_GLOBALS = {
@@ -27,13 +28,110 @@ SAFE_MATH_GLOBALS = {
 }
 
 PRESET_FUNCTIONS: Dict[str, Dict[str, Any]] = {
-    "Quadratic": {"expr": "x**2", "title": "f(x) = x²", "x_min": -5.0, "x_max": 5.0, "description": "Parabola opening upwards with vertex at origin."},
-    "Cubic": {"expr": "x**3 - 3*x", "title": "f(x) = x³ - 3x", "x_min": -3.0, "x_max": 3.0, "description": "Polynomial with local maximum and minimum."},
-    "Sine Wave": {"expr": "sin(x)", "title": "f(x) = sin(x)", "x_min": -6.28, "x_max": 6.28, "description": "Periodic wave oscillating between -1 and 1."},
-    "Cosine Wave": {"expr": "cos(x)", "title": "f(x) = cos(x)", "x_min": -6.28, "x_max": 6.28, "description": "Periodic wave with peak at x = 0."},
-    "Gaussian": {"expr": "exp(-x**2)", "title": "f(x) = e^(-x²)", "x_min": -3.0, "x_max": 3.0, "description": "Symmetric bell-shaped curve."},
-    "Logarithmic": {"expr": "log(x)", "title": "f(x) = ln(x)", "x_min": 0.1, "x_max": 10.0, "description": "Natural logarithm defined for x > 0."},
-    "Reciprocal": {"expr": "1/x", "title": "f(x) = 1/x", "x_min": -5.0, "x_max": 5.0, "description": "Hyperbola with vertical asymptote at x = 0."},
+    "Quadratic": {
+        "category": "Polynomials",
+        "expr": "x**2",
+        "title": "f(x) = x²",
+        "x_min": -5.0,
+        "x_max": 5.0,
+        "description": "Parabola opening upwards with vertex at origin."
+    },
+    "Cubic": {
+        "category": "Polynomials",
+        "expr": "x**3 - 3*x",
+        "title": "f(x) = x³ - 3x",
+        "x_min": -3.0,
+        "x_max": 3.0,
+        "description": "Polynomial with local maximum and minimum."
+    },
+    "Quartic": {
+        "category": "Polynomials",
+        "expr": "x**4 - 2*x**2",
+        "title": "f(x) = x⁴ - 2x²",
+        "x_min": -2.0,
+        "x_max": 2.0,
+        "description": "W-shaped polynomial with two local minima."
+    },
+    "Sine Wave": {
+        "category": "Trigonometric",
+        "expr": "sin(x)",
+        "title": "f(x) = sin(x)",
+        "x_min": -6.28,
+        "x_max": 6.28,
+        "description": "Periodic wave oscillating between -1 and 1."
+    },
+    "Cosine Wave": {
+        "category": "Trigonometric",
+        "expr": "cos(x)",
+        "title": "f(x) = cos(x)",
+        "x_min": -6.28,
+        "x_max": 6.28,
+        "description": "Periodic wave with peak at x = 0."
+    },
+    "Trig Superposition": {
+        "category": "Trigonometric",
+        "expr": "sin(x) + cos(x)",
+        "title": "f(x) = sin(x) + cos(x)",
+        "x_min": -6.28,
+        "x_max": 6.28,
+        "description": "Composite wave illustrating constructive/destructive interference."
+    },
+    "Damped Oscillation": {
+        "category": "Trigonometric",
+        "expr": "exp(-x/5) * sin(x)",
+        "title": "f(x) = e^(-x/5) * sin(x)",
+        "x_min": 0.0,
+        "x_max": 20.0,
+        "description": "Oscillating motion with exponential decay over time."
+    },
+    "Gaussian": {
+        "category": "Exponential & Logarithmic",
+        "expr": "exp(-x**2)",
+        "title": "f(x) = e^(-x²)",
+        "x_min": -3.0,
+        "x_max": 3.0,
+        "description": "Symmetric bell-shaped curve."
+    },
+    "Exponential Decay": {
+        "category": "Exponential & Logarithmic",
+        "expr": "exp(-x)",
+        "title": "f(x) = e^(-x)",
+        "x_min": -1.0,
+        "x_max": 5.0,
+        "description": "Standard exponential decay curve."
+    },
+    "Logarithmic": {
+        "category": "Exponential & Logarithmic",
+        "expr": "log(x)",
+        "title": "f(x) = ln(x)",
+        "x_min": 0.1,
+        "x_max": 10.0,
+        "description": "Natural logarithm defined for x > 0."
+    },
+    "Reciprocal": {
+        "category": "Special Functions",
+        "expr": "1/x",
+        "title": "f(x) = 1/x",
+        "x_min": -5.0,
+        "x_max": 5.0,
+        "description": "Hyperbola with vertical asymptote at x = 0."
+    },
+    "Absolute Value": {
+        "category": "Special Functions",
+        "expr": "abs(x)",
+        "title": "f(x) = |x|",
+        "x_min": -5.0,
+        "x_max": 5.0,
+        "description": "V-shaped continuous function with non-differentiable vertex at origin."
+    },
+    "Rational Function": {
+        "category": "Special Functions",
+        "expr": "(x**2 - 1) / (x**2 + 1)",
+        "title": "f(x) = (x²-1)/(x²+1)",
+        "x_min": -4.0,
+        "x_max": 4.0,
+        "description": "Smooth rational curve bounded between -1 and 1."
+    }
 }
 
 
@@ -274,3 +372,66 @@ def generate_ascii_plot(
     lines.append(f" {summary}")
 
     return "\n".join(lines)
+
+
+def export_plot_to_file(plot_str: str, filepath: Optional[str] = None) -> str:
+    """Save plot ASCII text and metadata to a text file."""
+    if not filepath:
+        import time
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        filepath = f"plot_export_{timestamp}.txt"
+    path = Path(filepath)
+    path.write_text(plot_str, encoding="utf-8")
+    return str(path.resolve())
+
+
+def compute_numerical_derivative(
+    fn: Callable[[float], float],
+    dx: float = 1e-5
+) -> Callable[[float], float]:
+    """Return a callable representing the numerical derivative f'(x) via central difference."""
+    def derivative(x: float) -> float:
+        try:
+            f_plus = fn(x + dx / 2.0)
+            f_minus = fn(x - dx / 2.0)
+            if math.isnan(f_plus) or math.isnan(f_minus):
+                return float('nan')
+            return (f_plus - f_minus) / dx
+        except Exception:
+            return float('nan')
+    return derivative
+
+
+def compute_numerical_integral(
+    fn: Callable[[float], float],
+    a: float,
+    b: float,
+    n: int = 1000
+) -> float:
+    """Compute numerical definite integral of f(x) from a to b using Simpson's Rule."""
+    if a == b:
+        return 0.0
+    if n % 2 != 0:
+        n += 1  # Simpson's rule requires even n
+
+    h = (b - a) / float(n)
+    total = 0.0
+
+    try:
+        fa = fn(a)
+        fb = fn(b)
+        if math.isnan(fa) or math.isnan(fb):
+            return float('nan')
+        total = fa + fb
+
+        for i in range(1, n):
+            x = a + i * h
+            val = fn(x)
+            if math.isnan(val):
+                return float('nan')
+            coefficient = 4.0 if i % 2 != 0 else 2.0
+            total += coefficient * val
+
+        return (h / 3.0) * total
+    except Exception:
+        return float('nan')

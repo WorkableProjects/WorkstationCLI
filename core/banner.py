@@ -1,7 +1,7 @@
 import sys
 import time
 
-VERSION = "0.0.6.3"
+VERSION = "0.0.7"
 ORGANIZATION = "Workable Projects"
 AUTHOR = "Dutchh"
 

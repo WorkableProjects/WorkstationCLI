@@ -50,7 +50,7 @@ def build_system_prompt(feature: str, reasoning_level: ReasoningLevel) -> str:
 
     return (
         f"{superprompt_instructions}\n"
-        f"Feature Context: {feature}. CLI Version: v0.0.6.2.\n"
+        f"Feature Context: {feature}. CLI Version: v0.0.7.\n"
         f"{runtime_context}\n"
         f"Reasoning Mode ({reasoning_level.value}): {REASONING_INSTRUCTIONS[reasoning_level]}"
     )

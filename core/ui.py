@@ -1,4 +1,4 @@
-"""Reusable interactive terminal UI primitives: grid selector, navigation, and detail panel."""
+"""Reusable interactive terminal UI primitives: grid selector, horizontal tab menu, navigation, and detail panel."""
 
 import sys
 import shutil
@@ -56,6 +56,127 @@ def _get_key() -> str:
         return ch
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
+
+
+class HorizontalTabMenu:
+    """
+    Horizontal tab-based interactive navigation menu.
+
+    Structure:
+    tabs = [
+        {
+            "name": "Chemistry",
+            "options": [
+                ("Molar Mass Calculator", handler_fn),
+                ...
+            ]
+        },
+        ...
+    ]
+    """
+
+    def __init__(self, title: str, tabs: List[Dict[str, Any]]):
+        self.title = title
+        self.tabs = tabs
+        self.active_tab_idx = 0
+        self.active_option_idx = 0
+
+    def run(self) -> None:
+        """Run the interactive horizontal tab menu loop."""
+        navigation.push(self.title)
+        try:
+            while True:
+                term_w = get_terminal_width()
+                clear_navigation()
+                print(f"{navigation.breadcrumb()}\n")
+
+                # Banner header line
+                line = "=" * min(term_w, 80)
+                print(theme_manager.colorize(line, "header"))
+                print(f" {theme_manager.colorize(self.title, 'header').center(min(term_w, 78))} ")
+                print(theme_manager.colorize(line, "header"))
+
+                # Render Tab Bar
+                tab_parts = []
+                for idx, tab in enumerate(self.tabs):
+                    tab_name = tab["name"]
+                    if idx == self.active_tab_idx:
+                        rendered = theme_manager.colorize(f"[ {tab_name} ]", "header")
+                    else:
+                        rendered = f"  {tab_name}  "
+                    tab_parts.append(rendered)
+                print("\n  " + "  ".join(tab_parts) + "\n")
+                print(theme_manager.colorize("-" * min(term_w, 80), "header"))
+
+                current_tab = self.tabs[self.active_tab_idx]
+                options = current_tab.get("options", [])
+
+                # Render active tab's options
+                print(f"\n {theme_manager.colorize(current_tab['name'].upper(), 'header')} OPTIONS:\n")
+                if not options:
+                    print("  (No options available)")
+                else:
+                    for opt_idx, option in enumerate(options):
+                        label = option[0]
+                        if opt_idx == self.active_option_idx:
+                            print(theme_manager.colorize(f"  > {opt_idx + 1}. {label} <", "ok"))
+                        else:
+                            print(f"    {opt_idx + 1}. {label}")
+
+                print("\n" + theme_manager.colorize("-" * min(term_w, 80), "header"))
+                print(" Controls: ←/→ (a/d) = Switch Tabs | ↑/↓ (w/s) = Navigate Options | Enter = Run | q = Exit")
+
+                if _HAS_TERMIOS:
+                    key = _get_key()
+                    if key in ("\x1b[D", "\x1bOD", "a", "A", "h", "H"):  # Left
+                        self.active_tab_idx = (self.active_tab_idx - 1) % len(self.tabs)
+                        self.active_option_idx = 0
+                    elif key in ("\x1b[C", "\x1bOC", "d", "D", "l", "L"):  # Right
+                        self.active_tab_idx = (self.active_tab_idx + 1) % len(self.tabs)
+                        self.active_option_idx = 0
+                    elif key in ("\x1b[A", "\x1bOA", "w", "W", "k", "K"):  # Up
+                        if options:
+                            self.active_option_idx = (self.active_option_idx - 1) % len(options)
+                    elif key in ("\x1b[B", "\x1bOB", "s", "S", "j", "J"):  # Down
+                        if options:
+                            self.active_option_idx = (self.active_option_idx + 1) % len(options)
+                    elif key in ("\r", "\n"):  # Enter
+                        if options and 0 <= self.active_option_idx < len(options):
+                            handler = options[self.active_option_idx][1]
+                            if handler:
+                                handler()
+                    elif key in ("q", "Q", "\x1b", "0"):
+                        break
+                else:
+                    cmd = input("\nEnter command (left/right/up/down/enter/q or option #): ").strip().lower()
+                    if cmd in ("q", "exit", "0"):
+                        break
+                    elif cmd in ("a", "left", "h"):
+                        self.active_tab_idx = (self.active_tab_idx - 1) % len(self.tabs)
+                        self.active_option_idx = 0
+                    elif cmd in ("d", "right", "l"):
+                        self.active_tab_idx = (self.active_tab_idx + 1) % len(self.tabs)
+                        self.active_option_idx = 0
+                    elif cmd in ("w", "up", "k"):
+                        if options:
+                            self.active_option_idx = (self.active_option_idx - 1) % len(options)
+                    elif cmd in ("s", "down", "j"):
+                        if options:
+                            self.active_option_idx = (self.active_option_idx + 1) % len(options)
+                    elif cmd in ("", "enter"):
+                        if options and 0 <= self.active_option_idx < len(options):
+                            handler = options[self.active_option_idx][1]
+                            if handler:
+                                handler()
+                    elif cmd.isdigit():
+                        idx = int(cmd) - 1
+                        if 0 <= idx < len(options):
+                            self.active_option_idx = idx
+                            handler = options[idx][1]
+                            if handler:
+                                handler()
+        finally:
+            navigation.pop()
 
 
 class GridSelector:

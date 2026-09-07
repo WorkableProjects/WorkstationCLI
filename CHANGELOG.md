@@ -2,7 +2,7 @@
 
 All notable changes to Workstation CLI will be documented in this file.
 
-## [1.0.0] - September 7, 2026
+## [R1 (1.0.0)] - September 7, 2026
 
 ### Added
 - **Command Palette (`Ctrl+K` or `/`)**:

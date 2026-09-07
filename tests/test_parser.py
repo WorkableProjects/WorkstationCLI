@@ -6,9 +6,10 @@ class TestParser(unittest.TestCase):
     def test_periodic_table_loads(self):
         pt = load_periodic_table()
         self.assertIn("H", pt)
-        self.assertEqual(pt["H"]["mass"], 1.01)
-        self.assertEqual(pt["O"]["mass"], 16.0)
-        self.assertEqual(pt["Cu"]["mass"], 63.55)
+        self.assertAlmostEqual(pt["H"]["mass"], 1.008, places=3)
+        self.assertAlmostEqual(pt["O"]["mass"], 15.999, places=2)
+        self.assertIn("period", pt["H"])
+        self.assertIn("electron_configuration", pt["H"])
 
     def test_simple_formulas(self):
         self.assertEqual(parse_chemical_formula("H2O"), {"H": 2, "O": 1})

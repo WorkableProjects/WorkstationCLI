@@ -6,6 +6,8 @@ HELP_MAP = {
     "AI": "AI study tools: chat, quiz generation, and study planners.",
     "GRAPHING TOOL": "Graphing tool. Plot custom functions f(x) or explore preset mathematical functions.",
     "PRESET FUNCTIONS": "Explore predefined common mathematical functions.",
+    "PLOT SETTINGS": "Configure default domain bounds, vertical scaling, and plot dimensions.",
+    "INTERACTIVE PERIODIC TABLE": "Navigate 118 elements in 2D layout with arrow keys or jump with search (/ or s).",
     "CHEMISTRY REFERENCE DATA": "Lookup periodic table elements, polyatomic ions, and constants.",
     "MOLAR MASS CALCULATOR": "Enter a chemical formula to compute molar mass and composition.",
 }

@@ -158,8 +158,9 @@ def run_plot_settings_menu() -> None:
     """View and adjust default plot settings (domain, Y scaling, dimensions)."""
     while True:
         print("\n" + theme_manager.header("--- PLOT SETTINGS & DEFAULTS ---"))
+        y_str = "Auto" if DEFAULT_PLOT_SETTINGS['y_min'] is None else f"[{DEFAULT_PLOT_SETTINGS['y_min']}, {DEFAULT_PLOT_SETTINGS['y_max']}]"
         print(f"1. Default X Domain : [{DEFAULT_PLOT_SETTINGS['x_min']}, {DEFAULT_PLOT_SETTINGS['x_max']}]")
-        print(f"2. Default Y Range  : {'Auto' if DEFAULT_PLOT_SETTINGS['y_min'] is None else f'[{DEFAULT_PLOT_SETTINGS[\"y_min\"]}, {DEFAULT_PLOT_SETTINGS[\"y_max\"]}]'}")
+        print(f"2. Default Y Range  : {y_str}")
         print(f"3. Plot Dimensions : {DEFAULT_PLOT_SETTINGS['width']} cols x {DEFAULT_PLOT_SETTINGS['height']} rows")
         print("0. Return to Graphing Menu")
 

@@ -2,6 +2,31 @@
 
 All notable changes to Workstation CLI will be documented in this file.
 
+## [0.0.7] - March 3, 2025
+
+### Added
+- **UI Navigation Overhaul (v0.0.6.3)**:
+  - Replaced nested submenus with a top-level horizontal tabbed layout (`[Chemistry]`, `[AI]`, `[Graphing]`, `[Settings]`, `[About]`).
+  - Options for each category are rendered directly under the active tab without requiring nested enter steps.
+  - Controls: `←`/`→` switch tabs, `↑`/`↓` navigate options, `Enter` executes options directly.
+  - Startup ASCII/Unicode banner animation with slide-in effect and toggle support in Settings.
+- **Graphing Overhauls & Calculus Tools (v0.0.6.4)**:
+  - **Advanced Multi-Series Plotting**: Plot 2 to 5 functions simultaneously on shared axes with distinct Unicode symbols (`●`, `○`, `×`, `+`, `◆`) and formatted legends.
+  - **Categorized Preset Library**: Expanded function presets to 13 categorized entries across Polynomials, Trigonometric, Exponential & Logarithmic, and Special Functions.
+  - **Calculus Visualizations**: Added Numerical Derivative plotter ($f(x)$ & $f'(x)$) and Numerical Definite Integral calculator ($\int_a^b f(x) dx$ via Simpson's rule).
+  - **Plot Export**: Save ASCII/Unicode rendered plots with metadata directly to `.txt` plain-text files.
+- **AI Superprompt & Reasoning Levels (v0.0.6.2)**:
+  - Consolidated Quiz Generator and Study Planner into a unified AI Chat superprompt with configurable reasoning levels (`Minimal`, `Low`, `Medium`, `Max`).
+- **Expanded Settings & System Configuration (v0.0.6.5)**:
+  - Categorized settings menu covering AI model configuration, UI preferences (theme selection & startup animation toggle), Graphing default parameters, and developer config tools.
+  - Config storage in local user directory (`~/.workstation_cli/config.json`).
+- **Expanded Test Suite**:
+  - Added comprehensive test suites for horizontal tab menu navigation, multi-series plotting, numerical derivative/integral calculations, plot export, and AI superprompts.
+
+### Changed
+- Upgraded version string to `0.0.7` across `core/banner.py`, `services/ollama_prompts.py`, and `README.md`.
+- Consolidated all v0.0.6.2 - v0.0.6.5 features into the official v0.0.7 overhaul release.
+
 ## [0.0.6] - March 3, 2025
 
 ### Added

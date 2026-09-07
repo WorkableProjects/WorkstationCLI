@@ -109,7 +109,14 @@ class HorizontalTabMenu:
                 print(theme_manager.colorize("-" * min(term_w, 80), "header"))
 
                 current_tab = self.tabs[self.active_tab_idx]
-                options = current_tab.get("options", [])
+                raw_options = current_tab.get("options", [])
+                if callable(raw_options):
+                    options = raw_options()
+                else:
+                    options = raw_options
+
+                if options and self.active_option_idx >= len(options):
+                    self.active_option_idx = max(0, len(options) - 1)
 
                 # Render active tab's options
                 print(f"\n {theme_manager.colorize(current_tab['name'].upper(), 'header')} OPTIONS:\n")
@@ -117,7 +124,11 @@ class HorizontalTabMenu:
                     print("  (No options available)")
                 else:
                     for opt_idx, option in enumerate(options):
-                        label = option[0]
+                        opt_label = option[0]
+                        if callable(opt_label):
+                            label = opt_label()
+                        else:
+                            label = str(opt_label)
                         if opt_idx == self.active_option_idx:
                             print(theme_manager.colorize(f"  > {opt_idx + 1}. {label} <", "ok"))
                         else:

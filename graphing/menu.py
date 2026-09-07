@@ -1,13 +1,17 @@
 """Graphing menu router, preset library, and plot configuration manager."""
 
-from typing import Optional, Dict, Any
+import math
+from typing import Optional, Dict, Any, List, Tuple
 from core.menu import display_menu
 from core import navigation, theme_manager, help as helpmod
 from graphing.plotter import (
     parse_function_expression,
     generate_ascii_plot,
     PRESET_FUNCTIONS,
-    PlotSeries
+    PlotSeries,
+    export_plot_to_file,
+    compute_numerical_derivative,
+    compute_numerical_integral
 )
 
 # Global plot settings
@@ -97,6 +101,210 @@ def run_custom_function_plot() -> None:
             title=f"f(x) = {expr_str}"
         )
         print("\n" + plot_str)
+        _prompt_plot_export(plot_str)
+    except Exception as e:
+        print(theme_manager.error(f"[Error] Failed to render plot: {e}"))
+
+    input("\nPress ENTER to return to Graphing Menu...")
+
+
+def _prompt_plot_export(plot_str: str) -> None:
+    """Prompt user if they want to export the rendered plot to a text file."""
+    exp_choice = input("\nExport plot to plain text file? (y/N): ").strip().lower()
+    if exp_choice in ("y", "yes"):
+        filename = input("Enter filename [auto-generated]: ").strip() or None
+        try:
+            saved_path = export_plot_to_file(plot_str, filename)
+            print(theme_manager.ok(f"✓ Plot saved successfully to: {saved_path}"))
+        except Exception as err:
+            print(theme_manager.error(f"[Error] Failed to export plot: {err}"))
+
+
+MULTI_SERIES_SYMBOLS = ["●", "○", "×", "+", "◆"]
+
+
+def run_multi_series_plot() -> None:
+    """Prompt user for 2-5 functions and plot them simultaneously on shared axes."""
+    print("\n" + theme_manager.header("--- Multi-Series Function Plotter ---"))
+    print("Enter between 2 and 5 functions to plot on the same axes.")
+    print("Examples: f1(x) = sin(x), f2(x) = cos(x)")
+
+    count_str = input("\nHow many functions to compare (2-5) [2]: ").strip() or "2"
+    try:
+        count = int(count_str)
+        if count < 2 or count > 5:
+            print(theme_manager.error("[Error] Number of functions must be between 2 and 5."))
+            input("\nPress ENTER to continue...")
+            return
+    except ValueError:
+        print(theme_manager.error("[Error] Invalid integer choice."))
+        input("\nPress ENTER to continue...")
+        return
+
+    series_list: List[PlotSeries] = []
+    for i in range(count):
+        sym = MULTI_SERIES_SYMBOLS[i % len(MULTI_SERIES_SYMBOLS)]
+        expr_str = input(f"Enter expression for function #{i+1} [{sym}]: ").strip()
+        if not expr_str:
+            print(theme_manager.warn("Expression skipped or cancelled."))
+            return
+        try:
+            fn = parse_function_expression(expr_str)
+            series_list.append(PlotSeries(fn=fn, label=f"f{i+1}(x) = {expr_str}", symbol=sym, expr=expr_str))
+        except Exception as e:
+            print(theme_manager.error(f"[Error] Invalid expression for function #{i+1}: {e}"))
+            input("\nPress ENTER to continue...")
+            return
+
+    # Domain Controls
+    print("\n" + theme_manager.colorize("--- Domain Configuration (X Range) ---", "header"))
+    def_x_min = DEFAULT_PLOT_SETTINGS["x_min"]
+    def_x_max = DEFAULT_PLOT_SETTINGS["x_max"]
+
+    x_min_str = input(f"X-axis minimum (left edge) [{def_x_min}]: ").strip()
+    x_max_str = input(f"X-axis maximum (right edge) [{def_x_max}]: ").strip()
+
+    try:
+        x_min = float(x_min_str) if x_min_str else float(def_x_min)
+        x_max = float(x_max_str) if x_max_str else float(def_x_max)
+    except ValueError:
+        print(theme_manager.error("[Error] Invalid numeric value for domain bounds."))
+        input("\nPress ENTER to continue...")
+        return
+
+    if x_min >= x_max:
+        print(theme_manager.error("[Error] Left edge (x_min) must be strictly less than right edge (x_max)."))
+        input("\nPress ENTER to continue...")
+        return
+
+    try:
+        plot_str = generate_ascii_plot(
+            series_input=series_list,
+            x_min=x_min,
+            x_max=x_max,
+            width=DEFAULT_PLOT_SETTINGS["width"],
+            height=DEFAULT_PLOT_SETTINGS["height"],
+            title="Multi-Series Function Comparison"
+        )
+        print("\n" + plot_str)
+        _prompt_plot_export(plot_str)
+    except Exception as e:
+        print(theme_manager.error(f"[Error] Failed to render multi-series plot: {e}"))
+
+    input("\nPress ENTER to return to Graphing Menu...")
+
+
+def run_derivative_plot() -> None:
+    """Plot function f(x) and its numerical derivative f'(x) together."""
+    print("\n" + theme_manager.header("--- Numerical Derivative Plotter ---"))
+    print("Displays f(x) [●] and its numerical derivative f'(x) [◆] on the same axes.")
+    expr_str = input("\nEnter function f(x): ").strip()
+    if not expr_str:
+        print(theme_manager.warn("No expression entered. Returning..."))
+        return
+
+    try:
+        fn = parse_function_expression(expr_str)
+        deriv_fn = compute_numerical_derivative(fn)
+    except Exception as e:
+        print(theme_manager.error(f"\n[Error] Invalid expression: {e}"))
+        input("\nPress ENTER to continue...")
+        return
+
+    print("\n" + theme_manager.colorize("--- Domain Configuration (X Range) ---", "header"))
+    def_x_min = DEFAULT_PLOT_SETTINGS["x_min"]
+    def_x_max = DEFAULT_PLOT_SETTINGS["x_max"]
+
+    x_min_str = input(f"X-axis minimum (left edge) [{def_x_min}]: ").strip()
+    x_max_str = input(f"X-axis maximum (right edge) [{def_x_max}]: ").strip()
+
+    try:
+        x_min = float(x_min_str) if x_min_str else float(def_x_min)
+        x_max = float(x_max_str) if x_max_str else float(def_x_max)
+    except ValueError:
+        print(theme_manager.error("[Error] Invalid numeric value for domain bounds."))
+        input("\nPress ENTER to continue...")
+        return
+
+    if x_min >= x_max:
+        print(theme_manager.error("[Error] Left edge (x_min) must be strictly less than right edge (x_max)."))
+        input("\nPress ENTER to continue...")
+        return
+
+    series_fn = PlotSeries(fn=fn, label=f"f(x) = {expr_str}", symbol="●", expr=expr_str)
+    series_deriv = PlotSeries(fn=deriv_fn, label="f'(x) [Derivative]", symbol="◆")
+
+    try:
+        plot_str = generate_ascii_plot(
+            series_input=[series_fn, series_deriv],
+            x_min=x_min,
+            x_max=x_max,
+            width=DEFAULT_PLOT_SETTINGS["width"],
+            height=DEFAULT_PLOT_SETTINGS["height"],
+            title=f"f(x) = {expr_str} and Derivative f'(x)"
+        )
+        print("\n" + plot_str)
+        _prompt_plot_export(plot_str)
+    except Exception as e:
+        print(theme_manager.error(f"[Error] Failed to render derivative plot: {e}"))
+
+    input("\nPress ENTER to return to Graphing Menu...")
+
+
+def run_integral_plot() -> None:
+    """Compute numerical definite integral of f(x) over [a, b] and display with plot."""
+    print("\n" + theme_manager.header("--- Definite Integral Calculator & Visualizer ---"))
+    expr_str = input("\nEnter function f(x): ").strip()
+    if not expr_str:
+        print(theme_manager.warn("No expression entered. Returning..."))
+        return
+
+    try:
+        fn = parse_function_expression(expr_str)
+    except Exception as e:
+        print(theme_manager.error(f"\n[Error] Invalid expression: {e}"))
+        input("\nPress ENTER to continue...")
+        return
+
+    print("\n" + theme_manager.colorize("--- Integration Bounds ---", "header"))
+    a_str = input("Lower bound (a) [0]: ").strip() or "0"
+    b_str = input("Upper bound (b) [5]: ").strip() or "5"
+
+    try:
+        a = float(a_str)
+        b = float(b_str)
+    except ValueError:
+        print(theme_manager.error("[Error] Invalid numeric value for bounds."))
+        input("\nPress ENTER to continue...")
+        return
+
+    integral_val = compute_numerical_integral(fn, a, b)
+
+    if math.isnan(integral_val):
+        print(theme_manager.error(f"\nCould not compute integral: Function has undefined values in interval [{a}, {b}]."))
+    else:
+        print("\n" + "=" * 50)
+        print(theme_manager.ok("  Definite Integral Result:"))
+        print(f"  ∫[{a:.2f}, {b:.2f}] ({expr_str}) dx ≈ {integral_val:.6f}")
+        print("=" * 50)
+
+    # Plot on bounds
+    x_min = min(a, b) - 1.0 if a != b else a - 5.0
+    x_max = max(a, b) + 1.0 if a != b else a + 5.0
+
+    try:
+        series = PlotSeries(fn=fn, label=f"f(x) = {expr_str}", symbol="•", expr=expr_str)
+        title_str = f"∫[{a:.2f}, {b:.2f}] f(x) dx ≈ {integral_val:.4f}" if not math.isnan(integral_val) else f"f(x) = {expr_str}"
+        plot_str = generate_ascii_plot(
+            series_input=series,
+            x_min=x_min,
+            x_max=x_max,
+            width=DEFAULT_PLOT_SETTINGS["width"],
+            height=DEFAULT_PLOT_SETTINGS["height"],
+            title=title_str
+        )
+        print("\n" + plot_str)
+        _prompt_plot_export(plot_str)
     except Exception as e:
         print(theme_manager.error(f"[Error] Failed to render plot: {e}"))
 
@@ -104,54 +312,72 @@ def run_custom_function_plot() -> None:
 
 
 def run_preset_functions_menu() -> None:
-    """Select and plot preset common mathematical functions."""
-    preset_names = list(PRESET_FUNCTIONS.keys())
-    options = [(str(i + 1), f"{name} — {PRESET_FUNCTIONS[name]['title']}") for i, name in enumerate(preset_names)]
-    options.append(("0", "Return to Graphing Menu"))
+    """Select and plot preset common mathematical functions grouped by category."""
+    categories: Dict[str, List[Tuple[str, Dict[str, Any]]]] = {}
+    for name, info in PRESET_FUNCTIONS.items():
+        cat = info.get("category", "General")
+        categories.setdefault(cat, []).append((name, info))
 
     while True:
-        choice = display_menu("PRESET FUNCTIONS", options)
+        cat_list = list(categories.keys())
+        options = [(str(i + 1), cat_name) for i, cat_name in enumerate(cat_list)]
+        options.append(("0", "Return to Graphing Menu"))
+
+        choice = display_menu("PRESET CATEGORIES", options)
         if choice == "0":
             return
 
         if choice.isdigit():
-            idx = int(choice) - 1
-            if 0 <= idx < len(preset_names):
-                name = preset_names[idx]
-                info = PRESET_FUNCTIONS[name]
-                fn = parse_function_expression(info["expr"])
+            c_idx = int(choice) - 1
+            if 0 <= c_idx < len(cat_list):
+                selected_cat = cat_list[c_idx]
+                preset_items = categories[selected_cat]
 
-                print(f"\nPreset: {name} ({info['title']})")
-                print(f"Description: {info['description']}")
-                override = input(f"Use preset domain [{info['x_min']}, {info['x_max']}]? (Y/n): ").strip().lower()
+                sub_options = [(str(j + 1), f"{p_name} — {p_info['title']}") for j, (p_name, p_info) in enumerate(preset_items)]
+                sub_options.append(("0", "Back to Preset Categories"))
 
-                if override == "n":
-                    x_min_str = input(f"X-axis minimum (left edge) [{info['x_min']}]: ").strip()
-                    x_max_str = input(f"X-axis maximum (right edge) [{info['x_max']}]: ").strip()
-                    try:
-                        x_min = float(x_min_str) if x_min_str else float(info["x_min"])
-                        x_max = float(x_max_str) if x_max_str else float(info["x_max"])
-                    except ValueError:
-                        print(theme_manager.error("[Error] Invalid numeric value."))
-                        input("\nPress ENTER to continue...")
-                        continue
-                else:
-                    x_min, x_max = info["x_min"], info["x_max"]
+                while True:
+                    sub_choice = display_menu(f"PRESETS: {selected_cat.upper()}", sub_options)
+                    if sub_choice == "0":
+                        break
 
-                series = PlotSeries(fn=fn, label=info["title"], symbol="•", expr=info["expr"])
-                plot_str = generate_ascii_plot(
-                    series_input=series,
-                    x_min=x_min,
-                    x_max=x_max,
-                    width=DEFAULT_PLOT_SETTINGS["width"],
-                    height=DEFAULT_PLOT_SETTINGS["height"],
-                    title=info["title"]
-                )
-                print("\n" + plot_str)
-                input("\nPress ENTER to continue...")
-                continue
+                    if sub_choice.isdigit():
+                        p_idx = int(sub_choice) - 1
+                        if 0 <= p_idx < len(preset_items):
+                            name, info = preset_items[p_idx]
+                            fn = parse_function_expression(info["expr"])
 
-        print("\n" + theme_manager.error("[Error] Invalid choice."))
+                            print(f"\nPreset: {name} ({info['title']})")
+                            print(f"Category: {selected_cat}")
+                            print(f"Description: {info['description']}")
+                            override = input(f"Use preset domain [{info['x_min']}, {info['x_max']}]? (Y/n): ").strip().lower()
+
+                            if override == "n":
+                                x_min_str = input(f"X-axis minimum (left edge) [{info['x_min']}]: ").strip()
+                                x_max_str = input(f"X-axis maximum (right edge) [{info['x_max']}]: ").strip()
+                                try:
+                                    x_min = float(x_min_str) if x_min_str else float(info["x_min"])
+                                    x_max = float(x_max_str) if x_max_str else float(info["x_max"])
+                                except ValueError:
+                                    print(theme_manager.error("[Error] Invalid numeric value."))
+                                    input("\nPress ENTER to continue...")
+                                    continue
+                            else:
+                                x_min, x_max = info["x_min"], info["x_max"]
+
+                            series = PlotSeries(fn=fn, label=info["title"], symbol="•", expr=info["expr"])
+                            plot_str = generate_ascii_plot(
+                                series_input=series,
+                                x_min=x_min,
+                                x_max=x_max,
+                                width=DEFAULT_PLOT_SETTINGS["width"],
+                                height=DEFAULT_PLOT_SETTINGS["height"],
+                                title=info["title"]
+                            )
+                            print("\n" + plot_str)
+                            input("\nPress ENTER to continue...")
+                            continue
+                    print("\n" + theme_manager.error("[Error] Invalid choice."))
 
 
 def run_plot_settings_menu() -> None:
@@ -212,8 +438,8 @@ def run_plot_settings_menu() -> None:
 
 
 def run_graph_help_menu() -> None:
-    """Display comprehensive graphing help and controls instructions."""
-    print("\n" + theme_manager.header("--- GRAPH HELP & CONTROLS ---"))
+    """Display comprehensive graphing help, calculus tools, and export instructions."""
+    print("\n" + theme_manager.header("--- GRAPH HELP & DOCUMENTATION ---"))
     print("""
 WORKSTATION CLI GRAPHING TOOL HELP:
 
@@ -223,17 +449,21 @@ WORKSTATION CLI GRAPHING TOOL HELP:
    - Implicit Multiplication: 2x, 3sin(x), x(x+1)
    - Functions: sin, cos, tan, exp, log (ln), log10, sqrt, abs
 
-2. Controls & Scaling:
-   - X Domain: Controls visible left → right horizontal range sampled.
-   - Y Range: Automatic scaling auto-detects min/max while filtering
-     extreme asymptote spikes (e.g. 1/x). Custom Y range lets you fix
-     vertical bounds.
-   - Plot Size: Width and Height can be adjusted under Plot Settings.
+2. Multi-Series Plotting:
+   - Compare 2 to 5 functions simultaneously on shared axes.
+   - Distinct symbols (●, ○, ×, +, ◆) with formatted legend.
 
-3. Features:
-   - Multi-series plotting support.
-   - Asymptote and discontinuity handling (undefined points render blank).
-   - Zero-axis markers ('┼', '│', '─').
+3. Calculus Tools:
+   - Numerical Derivative Plot: Displays f(x) and f'(x) together on graph.
+   - Definite Integral: Computes ∫[a, b] f(x) dx via Simpson's rule.
+
+4. Exporting Plots:
+   - Save rendered plots to plain-text (.txt) files.
+   - Includes title, expressions, domain, range, and size metadata.
+
+5. Domain & Asymptotes:
+   - Automatic outlier filtering prevents extreme asymptote spikes (e.g. 1/x).
+   - Undefined domain points (NaN / Inf) render as clean blank spaces.
 """)
     input("Press ENTER to return to Graphing Menu...")
 
@@ -244,16 +474,22 @@ def run_graphing_menu() -> None:
     try:
         options = [
             ("1", "Plot Custom Function"),
-            ("2", "Preset Functions"),
-            ("3", "Plot Settings"),
-            ("4", "Graph Help / Controls"),
+            ("2", "Compare Multiple Functions"),
+            ("3", "Numerical Derivative Plot"),
+            ("4", "Definite Integral Calculation"),
+            ("5", "Preset Functions Library"),
+            ("6", "Plot Settings"),
+            ("7", "Graph Help / Documentation"),
             ("0", "Return to Main Menu"),
         ]
         handlers = {
             "1": run_custom_function_plot,
-            "2": run_preset_functions_menu,
-            "3": run_plot_settings_menu,
-            "4": run_graph_help_menu,
+            "2": run_multi_series_plot,
+            "3": run_derivative_plot,
+            "4": run_integral_plot,
+            "5": run_preset_functions_menu,
+            "6": run_plot_settings_menu,
+            "7": run_graph_help_menu,
         }
 
         while True:

@@ -5,34 +5,113 @@ from services.config import load_config, save_config
 
 
 def run_settings_menu() -> None:
-    """Display settings menu for appearance, theme, and other CLI preferences."""
-    while True:
-        cfg = load_config()
-        anim_enabled = cfg.get("appearance", {}).get("startup_animation", True)
-        anim_status = "Enabled" if anim_enabled else "Disabled"
+    """Display settings menu for AI, UI appearance, graphing defaults, and system config."""
+    from commands.common_ai import configure_ai_settings
+    from graphing.menu import run_plot_settings_menu
 
+    while True:
         options = [
-            ("1", "Change Theme"),
-            ("2", f"Toggle Startup Animation ({anim_status})"),
-            ("3", "View Config File Location"),
+            ("1", "AI & Model Configuration"),
+            ("2", "UI & Appearance Preferences"),
+            ("3", "Graphing Defaults Configuration"),
+            ("4", "Config File & Developer Utilities"),
             ("0", "Return to Main Menu"),
         ]
-        choice = display_menu("SETTINGS", options)
-        
+        choice = display_menu("CLI SETTINGS & PREFERENCES", options)
+
         if choice == "1":
-            _toggle_theme()
+            configure_ai_settings()
         elif choice == "2":
-            _toggle_animation()
+            run_ui_settings_menu()
         elif choice == "3":
-            from services.config import CONFIG_FILE
-            print(f"\nConfig file location: {CONFIG_FILE}")
-            print("Edit manually to change other settings.")
-            input("\nPress ENTER to continue...")
+            run_plot_settings_menu()
+        elif choice == "4":
+            run_developer_settings_menu()
         elif choice == "0":
             return
         else:
             from core import theme_manager
             print("\n" + theme_manager.error("[Error] Invalid selection."))
+
+
+def run_ui_settings_menu() -> None:
+    """Submenu for UI and display preferences."""
+    from core import theme_manager
+    while True:
+        cfg = load_config()
+        theme_name = cfg.get("appearance", {}).get("theme", "blue")
+        anim_enabled = cfg.get("appearance", {}).get("startup_animation", True)
+        anim_status = "Enabled" if anim_enabled else "Disabled"
+
+        options = [
+            ("1", f"Change Theme (Current: {theme_name})"),
+            ("2", f"Toggle Startup Animation ({anim_status})"),
+            ("0", "Return to Settings Menu"),
+        ]
+        choice = display_menu("UI & APPEARANCE PREFERENCES", options)
+
+        if choice == "1":
+            _toggle_theme()
+        elif choice == "2":
+            _toggle_animation()
+        elif choice == "0":
+            return
+        else:
+            print("\n" + theme_manager.error("[Error] Invalid selection."))
+
+
+def run_developer_settings_menu() -> None:
+    """Submenu for developer tools and configuration file access."""
+    from core import theme_manager
+    from services.config import open_config_in_editor, CONFIG_FILE
+
+    while True:
+        options = [
+            ("1", "View Config File Path"),
+            ("2", "Open Config File in Editor"),
+            ("0", "Return to Settings Menu"),
+        ]
+        choice = display_menu("DEVELOPER & SYSTEM CONFIG", options)
+
+        if choice == "1":
+            print(f"\nConfig file path: {CONFIG_FILE}")
+            input("\nPress ENTER to continue...")
+        elif choice == "2":
+            success = open_config_in_editor()
+            if success:
+                print(theme_manager.ok("Opened config file in system editor."))
+            else:
+                print(theme_manager.warn(f"Could not open editor. Please edit directly at: {CONFIG_FILE}"))
+            input("\nPress ENTER to continue...")
+        elif choice == "0":
+            return
+        else:
+            print("\n" + theme_manager.error("[Error] Invalid selection."))
+
+
+def toggle_startup_animation() -> None:
+    """Toggle startup animation preference."""
+    _toggle_animation()
+
+
+def toggle_theme() -> None:
+    """Prompt user to select a theme and save preference."""
+    _toggle_theme()
+
+
+def get_animation_status() -> str:
+    """Get status string for startup animation setting."""
+    cfg = load_config()
+    enabled = cfg.get("appearance", {}).get("startup_animation", True)
+    return "Enabled" if enabled else "Disabled"
+
+
+def show_config_location() -> None:
+    """Display the configuration file path."""
+    from services.config import CONFIG_FILE
+    print(f"\nConfig file location: {CONFIG_FILE}")
+    print("Edit manually to change other settings.")
+    input("\nPress ENTER to continue...")
 
 
 def _toggle_animation() -> None:

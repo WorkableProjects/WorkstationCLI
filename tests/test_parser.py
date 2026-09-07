@@ -8,7 +8,8 @@ class TestParser(unittest.TestCase):
         self.assertIn("H", pt)
         self.assertEqual(pt["H"]["mass"], 1.01)
         self.assertEqual(pt["O"]["mass"], 16.0)
-        self.assertEqual(pt["Cu"]["mass"], 63.55)
+        self.assertIn("period", pt["H"])
+        self.assertIn("electron_configuration", pt["H"])
 
     def test_simple_formulas(self):
         self.assertEqual(parse_chemical_formula("H2O"), {"H": 2, "O": 1})

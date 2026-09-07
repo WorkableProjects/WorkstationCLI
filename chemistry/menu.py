@@ -55,6 +55,6 @@ def run_chemistry_menu() -> None:
         navigation.pop()
 
 
-# Helper to call the periodic table viewer in reference module without circular import
-from calculators.reference import run_periodic_table_menu as run_chemistry_reference_periodic
+# Helper to call the interactive periodic table viewer without circular import
+from chemistry.periodic_table import run_interactive_periodic_table as run_chemistry_reference_periodic
 

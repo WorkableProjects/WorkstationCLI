@@ -10,10 +10,27 @@ from typing import Optional, Dict, Any
 
 _HISTORY_MAX = 50
 _history = deque(maxlen=_HISTORY_MAX)
+_session_context: Dict[str, Any] = {}
 
 
 def add(entry: Dict[str, Any]) -> None:
     _history.appendleft(entry)
+
+
+def set_session_data(key: str, value: Any) -> None:
+    """Store temporary session state."""
+    _session_context[key] = value
+
+
+def get_session_data(key: str, default: Any = None) -> Any:
+    """Retrieve temporary session state."""
+    return _session_context.get(key, default)
+
+
+def clear_session() -> None:
+    """Clear session data and calculation history."""
+    _history.clear()
+    _session_context.clear()
 
 
 def get_recent(n: int = 1) -> Optional[Dict[str, Any]]:

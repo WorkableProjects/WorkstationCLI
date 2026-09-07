@@ -75,11 +75,12 @@ class HorizontalTabMenu:
     ]
     """
 
-    def __init__(self, title: str, tabs: List[Dict[str, Any]]):
+    def __init__(self, title: str, tabs: List[Dict[str, Any]], palette_commands: Optional[List[Dict[str, Any]]] = None):
         self.title = title
         self.tabs = tabs
         self.active_tab_idx = 0
         self.active_option_idx = 0
+        self.palette_commands = palette_commands
 
     def run(self) -> None:
         """Run the interactive horizontal tab menu loop."""
@@ -135,11 +136,16 @@ class HorizontalTabMenu:
                             print(f"    {opt_idx + 1}. {label}")
 
                 print("\n" + theme_manager.colorize("-" * min(term_w, 80), "header"))
-                print(" Controls: ←/→ (a/d) = Switch Tabs | ↑/↓ (w/s) = Navigate Options | Enter = Run | q = Exit")
+                palette_hint = " | Ctrl+K / '/' = Command Palette" if self.palette_commands else ""
+                print(f" Controls: ←/→ (a/d) = Switch Tabs | ↑/↓ (w/s) = Navigate Options | Enter = Run{palette_hint} | q = Exit")
 
                 if _HAS_TERMIOS:
                     key = _get_key()
-                    if key in ("\x1b[D", "\x1bOD", "a", "A", "h", "H"):  # Left
+                    if key in ("\x0b", "/") and self.palette_commands:  # Ctrl+K or /
+                        from core.command_palette import CommandPalette
+                        cp = CommandPalette(self.palette_commands)
+                        cp.run()
+                    elif key in ("\x1b[D", "\x1bOD", "a", "A", "h", "H"):  # Left
                         self.active_tab_idx = (self.active_tab_idx - 1) % len(self.tabs)
                         self.active_option_idx = 0
                     elif key in ("\x1b[C", "\x1bOC", "d", "D", "l", "L"):  # Right
@@ -392,3 +398,162 @@ class DetailPanel:
             input("\nPress ENTER to return...")
         finally:
             pop()
+
+
+# Standardized Input System Primitives
+def prompt_input(
+    prompt_text: str,
+    default: Optional[str] = None,
+    validator: Optional[Callable[[str], Any]] = None,
+    allow_cancel: bool = True
+) -> Optional[str]:
+    """
+    Standardized interactive input prompt with optional default, validation, and cancel support.
+    Returns None if user cancels (by entering 'q', 'cancel', or Esc when empty).
+    """
+    default_str = f" [{default}]" if default is not None else ""
+    full_prompt = f"{prompt_text}{default_str}: "
+
+    while True:
+        try:
+            val = input(full_prompt).strip()
+        except (KeyboardInterrupt, EOFError):
+            return None
+
+        if not val:
+            if default is not None:
+                return str(default)
+            if allow_cancel:
+                return None
+
+        if allow_cancel and val.lower() in ("q", "cancel", ":q"):
+            return None
+
+        if validator:
+            try:
+                validated_val = validator(val)
+                return str(validated_val) if not isinstance(validated_val, str) else validated_val
+            except Exception as e:
+                print(theme_manager.error(f"  [Validation Error] {e}"))
+                continue
+
+        return val
+
+
+def prompt_float(
+    prompt_text: str,
+    default: Optional[float] = None,
+    min_val: Optional[float] = None,
+    max_val: Optional[float] = None,
+    allow_blank: bool = False
+) -> Optional[float]:
+    """Standardized numeric float input prompt with min/max validation."""
+    def _validate(s: str) -> float:
+        f = float(s)
+        if min_val is not None and f < min_val:
+            raise ValueError(f"Value must be >= {min_val}")
+        if max_val is not None and f > max_val:
+            raise ValueError(f"Value must be <= {max_val}")
+        return f
+
+    default_str = str(default) if default is not None else None
+    res = prompt_input(prompt_text, default=default_str, validator=_validate, allow_cancel=True)
+    if res is None:
+        return None if allow_blank else default
+    try:
+        return float(res)
+    except Exception:
+        return default
+
+
+def prompt_int(
+    prompt_text: str,
+    default: Optional[int] = None,
+    min_val: Optional[int] = None,
+    max_val: Optional[int] = None,
+    allow_blank: bool = False
+) -> Optional[int]:
+    """Standardized integer input prompt with min/max validation."""
+    def _validate(s: str) -> int:
+        i = int(s)
+        if min_val is not None and i < min_val:
+            raise ValueError(f"Value must be >= {min_val}")
+        if max_val is not None and i > max_val:
+            raise ValueError(f"Value must be <= {max_val}")
+        return i
+
+    default_str = str(default) if default is not None else None
+    res = prompt_input(prompt_text, default=default_str, validator=_validate, allow_cancel=True)
+    if res is None:
+        return None if allow_blank else default
+    try:
+        return int(res)
+    except Exception:
+        return default
+
+
+def prompt_yes_no(prompt_text: str, default: bool = False) -> bool:
+    """Standardized Yes/No boolean prompt."""
+    hint = "[Y/n]" if default else "[y/N]"
+    full_prompt = f"{prompt_text} {hint}: "
+    try:
+        res = input(full_prompt).strip().lower()
+    except (KeyboardInterrupt, EOFError):
+        return default
+
+    if not res:
+        return default
+    return res.startswith("y")
+
+
+# Universal Output Actions Primitive
+def handle_output_actions(
+    title: str,
+    text_content: str,
+    actions: Optional[List[str]] = None,
+    ai_callback: Optional[Callable[[str], None]] = None
+) -> None:
+    """
+    Standardized output action bar handler: [Copy], [Save], [Export], [Send to AI], [Back].
+    """
+    from core import exporter
+    if actions is None:
+        actions = ["copy", "save", "back"]
+
+    term_w = get_terminal_width()
+    print("\n" + theme_manager.colorize("-" * min(term_w, 80), "header"))
+    action_btns = []
+    if "copy" in actions:
+        action_btns.append("[C]opy")
+    if "save" in actions or "export" in actions:
+        action_btns.append("[S]ave")
+    if "send_to_ai" in actions and ai_callback:
+        action_btns.append("[A]I Chat")
+    action_btns.append("[B]ack")
+
+    print(" Actions: " + "  ".join(action_btns))
+
+    while True:
+        try:
+            choice = input("\nSelect action (or press Enter to return): ").strip().lower()
+        except (KeyboardInterrupt, EOFError):
+            break
+
+        if choice in ("", "b", "back", "q", "exit"):
+            break
+        elif choice in ("c", "copy") and "copy" in actions:
+            ok = exporter.copy_to_clipboard(text_content)
+            if ok:
+                print(theme_manager.colorize("✓ Copied to clipboard.", "ok"))
+            else:
+                print(theme_manager.error("[Info] Clipboard not available. Output text is printed above."))
+        elif choice in ("s", "save", "e", "export") and ("save" in actions or "export" in actions):
+            prefix = title.lower().replace(" ", "_").replace("/", "_")
+            path = exporter.save_text(text_content, prefix=prefix)
+            print(theme_manager.colorize(f"✓ Saved output to: {path}", "ok"))
+        elif choice in ("a", "ai") and "send_to_ai" in actions and ai_callback:
+            print(theme_manager.colorize("Sending output context to AI Chat...", "header"))
+            ai_callback(text_content)
+            break
+        else:
+            print(theme_manager.error("Invalid choice. Press Enter to return."))

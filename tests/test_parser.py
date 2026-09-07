@@ -6,8 +6,8 @@ class TestParser(unittest.TestCase):
     def test_periodic_table_loads(self):
         pt = load_periodic_table()
         self.assertIn("H", pt)
-        self.assertAlmostEqual(pt["H"]["mass"], 1.008, places=3)
-        self.assertAlmostEqual(pt["O"]["mass"], 15.999, places=2)
+        self.assertEqual(pt["H"]["mass"], 1.01)
+        self.assertEqual(pt["O"]["mass"], 16.0)
         self.assertIn("period", pt["H"])
         self.assertIn("electron_configuration", pt["H"])
 

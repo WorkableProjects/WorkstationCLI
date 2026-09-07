@@ -184,18 +184,17 @@ def format_element_detail(symbol: str, data: Dict[str, Any]) -> str:
 
 
 def render_element_tile(symbol: Optional[str], data: Optional[Dict[str, Any]], is_selected: bool, compact_mode: bool) -> str:
-    """Render a single 4-char (or 3-char) periodic table tile."""
+    """Render a single periodic table tile with consistent width."""
     if symbol is None:
         return "   " if compact_mode else "    "
 
     sym_str = symbol[:2]
     if compact_mode:
         if is_selected:
-            return theme_manager.colorize(f"[{sym_str:^2}]", "header")
+            return theme_manager.colorize(f"[{sym_str:^1}]", "header")
         return f" {sym_str:^2}"
     else:
         if is_selected:
-            # Highlighted cell
             return theme_manager.colorize(f"[{sym_str:^2}]", "header")
         return f" {sym_str:^2} "
 

@@ -32,13 +32,12 @@ def _get_key() -> str:
         tty.setraw(fd)
         ch = sys.stdin.read(1)
         if ch == "\x1b":
-            # Check for non-blocking read of escape sequences
             import select
-            r, _, _ = select.select([sys.stdin], [], [], 0.1)
+            r, _, _ = select.select([sys.stdin], [], [], 0.15)
             if r:
                 seq = sys.stdin.read(2)
                 return ch + seq
-            return "\x1b"  # Esc key alone
+            return "\x1b"
         return ch
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
@@ -203,7 +202,7 @@ class GridSelector:
                     elif key in ("/", "s"):  # Search
                         self._handle_search()
                         continue
-                    elif key in ("q", "Q", "\x1b", "0"):
+                    elif key in ("q", "Q", "0"):
                         break
                     continue
                 else:

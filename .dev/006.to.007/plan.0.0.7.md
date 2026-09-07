@@ -5,7 +5,7 @@
 - **Consolidate v0.0.6.2 through v0.0.6.5** into a single v0.0.7 release.
 - **Update Documentation**:
   - README: New tab-based navigation, superprompt, graphing features.
-  - CHANGELOG: Summarize all improvements.
+  - CHANGELOG: Summarize all improvements. (all files excluding this one in ~/.dev/006.to.007/
   - Help/About: Reflect new structure and capabilities.
   
 - **Version Bump**: `0.0.6` → `0.0.7` in `core/banner.py`.

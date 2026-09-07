@@ -13,11 +13,11 @@
     <header class="app-header">
       <div class="logo-container">
         <img src="logo.png" alt="Workstation Logo" class="app-logo" onerror="this.style.display='none'">
-        <span class="app-title">WORKSTATION <small class="version-tag">CLI v1.1.0 | WGI v0.0.1</small></span>
+        <span class="app-title">WORKSTATION</span>
       </div>
       <div class="header-center">
         <button id="btn-command-palette" class="palette-btn">
-          <span>🔍 Search Workstation... (Ctrl+K)</span>
+          <span>🔍 Search Workstation Tools... (Ctrl+K)</span>
         </button>
       </div>
       <div class="header-right">
@@ -26,17 +26,7 @@
     </header>
 
     <div class="workspace">
-      <!-- Left Sidebar File Explorer -->
-      <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-          <span class="sidebar-title">PROJECT EXPLORER</span>
-        </div>
-        <div id="file-tree" class="file-tree">
-          <div class="tree-loading">Loading project files...</div>
-        </div>
-      </aside>
-
-      <!-- Desktop Workspace Area -->
+      <!-- Main Desktop Area -->
       <main class="desktop" id="desktop">
         <!-- Desktop Windows Container -->
         <div id="windows-container"></div>
@@ -48,7 +38,7 @@
   <div id="modal-command-palette" class="modal-overlay hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <input type="text" id="palette-search-input" placeholder="Type a command or tool name..." autofocus>
+        <input type="text" id="palette-search-input" placeholder="Search Workstation tools (e.g. Molar Mass, Gas Laws, AI Chat)..." autofocus>
       </div>
       <div id="palette-results" class="palette-results"></div>
     </div>

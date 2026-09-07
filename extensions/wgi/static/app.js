@@ -6,7 +6,7 @@ let openWindows = {};
 
 document.addEventListener('DOMContentLoaded', () => {
   initUI();
-  loadProjectFiles();
+  openCommandPalette();
   restoreUIState();
 });
 
@@ -43,49 +43,6 @@ function initUI() {
 }
 
 /* Load File Tree */
-async function loadProjectFiles() {
-  const treeContainer = document.getElementById('file-tree');
-  try {
-    const res = await fetch('/api/files');
-    const data = await res.json();
-
-    if (!data.files || data.files.length === 0) {
-      treeContainer.innerHTML = '<div class="tree-loading">No supported files found.</div>';
-      return;
-    }
-
-    treeContainer.innerHTML = '';
-    data.files.forEach(file => {
-      const item = document.createElement('div');
-      item.className = 'tree-item';
-
-      const icon = file.type === 'markdown' ? '📄' : '🐍';
-      item.innerHTML = `<span class="tree-icon">${icon}</span> <span>${file.path}</span>`;
-
-      let clickTimer = null;
-      item.addEventListener('click', () => {
-        if (clickTimer) {
-          clearTimeout(clickTimer);
-          clickTimer = null;
-          // Double click handler
-          handleFileAction(file, 'dblclick');
-        } else {
-          clickTimer = setTimeout(() => {
-            clickTimer = null;
-            // Single click handler
-            document.querySelectorAll('.tree-item').forEach(el => el.classList.remove('selected'));
-            item.classList.add('selected');
-            handleFileAction(file, 'click');
-          }, 250);
-        }
-      });
-
-      treeContainer.appendChild(item);
-    });
-  } catch (err) {
-    treeContainer.innerHTML = `<div class="tree-loading">Failed to load files: ${err}</div>`;
-  }
-}
 
 /* Handle File Clicks */
 function handleFileAction(file, eventType) {
@@ -349,7 +306,7 @@ async function searchCommands(query) {
         if (cmd.name.toLowerCase().includes('terminal')) {
           createTerminalWindow('Terminal');
         } else {
-          // Launch default tool in terminal
+          // Launch CLI workstation session with specific tool context in terminal window
           createTerminalWindow(cmd.name, `python3 workstation.py`);
         }
       });

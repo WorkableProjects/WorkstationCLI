@@ -108,18 +108,32 @@ def main() -> None:
         }
     ]
 
+    from core.registry import registry
+
     palette_commands = []
     for tab in tabs:
         cat_name = tab["name"]
         for opt in tab.get("options", []):
             opt_label, handler = opt
             label_str = opt_label() if callable(opt_label) else str(opt_label)
-            palette_commands.append({
+            cmd_id = f"{cat_name.lower()}_{label_str.lower().replace(' ', '_')}"
+
+            cmd_item = {
                 "name": label_str,
                 "category": cat_name,
                 "keywords": f"{label_str} {cat_name}".lower(),
                 "handler": handler
-            })
+            }
+            palette_commands.append(cmd_item)
+
+            registry.register(
+                command_id=cmd_id,
+                name=label_str,
+                category=cat_name,
+                handler=handler,
+                keywords=f"{label_str} {cat_name}".lower(),
+                description=f"Launch {label_str} ({cat_name})"
+            )
 
     menu = HorizontalTabMenu("WORKSTATION CLI", tabs, palette_commands=palette_commands)
     menu.run()

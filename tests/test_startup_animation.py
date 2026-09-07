@@ -12,7 +12,7 @@ def test_display_banner(capsys):
     """Verify display_banner prints expected version and organization info."""
     display_banner(animated=False)
     captured = capsys.readouterr()
-    assert "Version: 1.0.0" in captured.out
+    assert "Version: R1" in captured.out
     assert "Made by Workable Projects" in captured.out
 
 
@@ -20,4 +20,4 @@ def test_display_startup_animation(capsys):
     """Verify display_startup_animation runs without errors."""
     display_startup_animation()
     captured = capsys.readouterr()
-    assert "Version: 1.0.0" in captured.out
+    assert "Version: R1" in captured.out
